@@ -3,6 +3,7 @@ import { defineUserConfig } from 'vuepress/cli'
 import { viteBundler } from '@vuepress/bundler-vite'
 
 export default defineUserConfig({
+  base: 'IMDLBenCo-doc',
   lang: 'en-US',
 
   title: 'VuePress',
