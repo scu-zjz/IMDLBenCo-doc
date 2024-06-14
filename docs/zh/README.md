@@ -3,11 +3,11 @@ home: true
 title: Home
 heroImage: images/IMDL_BenCo.png
 actions:
-  - text: Get Started
+  - text: 开始体验
     link: get-started.md
     type: primary
 
-  - text: Introduction
+  - text: 简介
     link: https://vuejs.press/guide/introduction.html
     type: secondary
 

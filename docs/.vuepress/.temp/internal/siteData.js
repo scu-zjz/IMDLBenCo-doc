@@ -1,4 +1,4 @@
-export const siteData = JSON.parse("{\"base\":\"/\",\"lang\":\"en-US\",\"title\":\"VuePress\",\"description\":\"My first VuePress Site\",\"head\":[],\"locales\":{}}")
+export const siteData = JSON.parse("{\"base\":\"/IMDLBenCo-doc/\",\"lang\":\"en-US\",\"title\":\"\",\"description\":\"\",\"head\":[],\"locales\":{\"/\":{\"lang\":\"en-US\",\"title\":\"IMDLBenCo Documentation\",\"description\":\"Benchmark and Codebase for Image manipulation localization & detection\"},\"/zh/\":{\"lang\":\"zh-CN\",\"title\":\"IMDLBenCo 文档\",\"description\":\"图像篡改检测与定位基准代码库\"}}}")
 
 if (import.meta.webpackHot) {
   import.meta.webpackHot.accept()
