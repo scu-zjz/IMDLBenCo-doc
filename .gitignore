@@ -2,7 +2,7 @@
 node_modules/
 
 # VuePress build output
-.vuepress/dist
+*/.vuepress/dist
 
 # Temp and cache files
 */.vuepress/.temp

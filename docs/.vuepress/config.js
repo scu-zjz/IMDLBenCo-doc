@@ -12,7 +12,7 @@ import {
 } from './configs/index.js'
 
 export default defineUserConfig({
-  base: 'IMDLBenCo-doc',
+  base: '/IMDLBenCo-doc/',
 
   head,
 
