@@ -5,8 +5,8 @@ node_modules/
 .vuepress/dist
 
 # Temp and cache files
-.vuepress/.temp
-.vuepress/.cache
+*/.vuepress/.temp
+*/.vuepress/.cache
 
 # Log files
 npm-debug.log*

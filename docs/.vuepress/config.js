@@ -4,7 +4,7 @@ import { viteBundler } from '@vuepress/bundler-vite'
 
 
 import {
-//   head,
+  head,
 //   navbarEn,
   navbarZh,
 //   sidebarEn,
@@ -13,6 +13,8 @@ import {
 
 export default defineUserConfig({
   base: 'IMDLBenCo-doc',
+
+  head,
 
   locales: {
     '/': {
@@ -31,6 +33,7 @@ export default defineUserConfig({
     logo: '/images/IMDL_BenCo.png',
     repo: 'scu-zjz/IMDLBenCo',
     docsRepo: 'scu-zjz/IMDLBenCo-doc',
+
 
     locales: {
       /**
