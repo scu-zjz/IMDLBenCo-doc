@@ -3,13 +3,13 @@ import { defineUserConfig } from 'vuepress/cli'
 import { viteBundler } from '@vuepress/bundler-vite'
 
 
-// import {
+import {
 //   head,
 //   navbarEn,
-//   navbarZh,
+  navbarZh,
 //   sidebarEn,
 //   sidebarZh,
-// } from './configs/index.js'
+} from './configs/index.js'
 
 export default defineUserConfig({
   base: 'IMDLBenCo-doc',
@@ -53,7 +53,7 @@ export default defineUserConfig({
        */
       '/zh/': {
         // navbar
-        // navbar: navbarZh,
+        navbar: navbarZh,
         selectLanguageName: '简体中文',
         selectLanguageText: '选择语言',
         selectLanguageAriaLabel: '选择语言',
