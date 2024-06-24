@@ -7,7 +7,7 @@ export const head: HeadConfig[] = [
             rel: 'icon',
             type: 'image/png',
             sizes: '16x16',
-            href: 'images/icons/favicon-16x16.png',
+            href: '/images/icons/favicon-16x16.png',
         },
     ],
     [
@@ -16,12 +16,12 @@ export const head: HeadConfig[] = [
             rel: 'icon',
             type: 'image/png',
             sizes: '32x32',
-            href: 'images/icons/favicon-32x32.png'
+            href: '/images/icons/favicon-32x32.png'
         },
     ],
     ['link', { rel: 'manifest', href: '/manifest.webmanifest' }],
-    ['meta', { name: 'application-name', content: 'VuePress' }],
-    ['meta', { name: 'apple-mobile-web-app-title', content: 'VuePress' }],
+    ['meta', { name: 'application-name', content: 'IMDL-BenCo-documentation' }],
+    ['meta', { name: 'apple-mobile-web-app-title', content: 'IMDL-BenCo-documentation' }],
     // ['meta', { name: 'apple-mobile-web-app-status-bar-style', content: 'black' }],
     // [
     //     'link',

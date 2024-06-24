@@ -5,10 +5,10 @@ import { viteBundler } from '@vuepress/bundler-vite'
 
 import {
   head,
-//   navbarEn,
+  navbarEn,
   navbarZh,
-//   sidebarEn,
-//   sidebarZh,
+  sidebarEn,
+  sidebarZh,
 } from './configs/index.js'
 
 export default defineUserConfig({
@@ -44,9 +44,9 @@ export default defineUserConfig({
        */
       '/': {
         // navbar
-        // navbar: navbarEn,
+        navbar: navbarEn,
         // sidebar
-        // sidebar: sidebarEn,
+        sidebar: sidebarEn,
         // page meta
         editLinkText: 'Edit this page on GitHub',
       },
@@ -61,7 +61,7 @@ export default defineUserConfig({
         selectLanguageText: '选择语言',
         selectLanguageAriaLabel: '选择语言',
         // sidebar
-        // sidebar: sidebarZh,
+        sidebar: sidebarZh,
         // page meta
         editLinkText: '在 GitHub 上编辑此页',
         lastUpdatedText: '上次更新',
