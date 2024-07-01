@@ -2,7 +2,6 @@ import { defaultTheme } from '@vuepress/theme-default'
 import { defineUserConfig } from 'vuepress/cli'
 import { viteBundler } from '@vuepress/bundler-vite'
 import { searchPlugin } from '@vuepress/plugin-search'
-import { redirectPlugin } from '@vuepress/plugin-redirect';
 
 
 import {
@@ -125,16 +124,7 @@ export default defineUserConfig({
         hotKeys: ['s', '/'],
         // 排除标题中的某些词语
         // isSearchable: (page) => page.path !== '/exclude.html',
-    }),
-    redirectPlugin,
-    {
-      redirect: [
-        {
-          from: '/',
-          to: '/en/readme.md',
-        },
-      ],
-    },
+    })
   ],
   // Redirection logic
 })
