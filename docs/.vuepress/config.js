@@ -23,11 +23,11 @@ export default defineUserConfig({
       title: 'IMDLBenCo Documentation',
       description: 'Benchmark and Codebase for Image manipulation localization & detection',
     },
-    '/en/': {
-      lang: 'en-US',
-      title: 'IMDLBenCo Documentation',
-      description: 'Benchmark and Codebase for Image manipulation localization & detection',
-    },
+    // '/en/': {
+    //   lang: 'en-US',
+    //   title: 'IMDLBenCo Documentation',
+    //   description: 'Benchmark and Codebase for Image manipulation localization & detection',
+    // },
     '/zh/': {
       lang: 'zh-CN',
       title: 'IMDLBenCo 文档',
@@ -59,15 +59,15 @@ export default defineUserConfig({
         editLinkText: 'Edit this page on GitHub',
       },
 
-      '/en/': {
-        // navbar
-        navbar: navbarEn,
-        selectLanguageName: 'English',
-        // sidebar
-        sidebar: sidebarEn,
-        // page meta
-        editLinkText: 'Edit this page on GitHub',
-      },
+      // '/en/': {
+      //   // navbar
+      //   navbar: navbarEn,
+      //   selectLanguageName: 'English',
+      //   // sidebar
+      //   sidebar: sidebarEn,
+      //   // page meta
+      //   editLinkText: 'Edit this page on GitHub',
+      // },
 
       /**
        * Chinese locale config

@@ -1,4 +1,4 @@
-# Get Started
+# 快速上手
 
 This is a normal page, which contains VuePress basics.
 

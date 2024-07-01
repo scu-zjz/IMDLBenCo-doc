@@ -8,13 +8,13 @@ export const navbarEn: NavbarConfig = [
           {
               text: 'Introduction',
               children: [
-                  "/en/guide/base/introduction.md"
+                  "/guide/base/introduction.md"
               ],
           },
           {
               text: 'Quick Start',
               children: [
-                  "/en/guide/quickstart/install.md"
+                  "/guide/quickstart/install.md"
               ],
           },
       ],

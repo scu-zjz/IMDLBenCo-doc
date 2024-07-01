@@ -4,11 +4,11 @@ title: Home
 heroImage: images/IMDL_BenCo.png
 actions:
   - text: Get Started
-    link: /en/guide/quickstart/install.md
+    link: /guide/quickstart/install.md
     type: primary
 
   - text: Introduction
-    link: /en/guide/base/introduction.md
+    link: /guide/base/introduction.md
     type: secondary
 
 
