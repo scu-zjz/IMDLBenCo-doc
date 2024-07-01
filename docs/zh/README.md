@@ -4,11 +4,11 @@ title: Home
 heroImage: images/IMDL_BenCo.png
 actions:
   - text: 开始体验
-    link: get-started.md
+    link: /zh/guide/quickstart/install.md
     type: primary
 
   - text: 简介
-    link: https://vuejs.press/guide/introduction.html
+    link: /zh/guide/base/introduction.md
     type: secondary
 
 features:
