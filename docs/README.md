@@ -4,14 +4,21 @@ title: Home
 heroImage: images/IMDL_BenCo.png
 actions:
   - text: Get Started
-    link: get-started.md
+    link: /en/guide/quickstart/install.md
     type: primary
 
   - text: Introduction
-    link: https://vuejs.press/guide/introduction.html
+    link: /en/guide/base/introduction.md
     type: secondary
 
 
+features:
+  - title: Modular Design
+    details: Based on object-oriented encapsulation, supplemented by a few callback functions and registration mechanisms, making it easy to call and redevelop.
+  - title: Research-Oriented
+    details: A framework designed for the characteristics of Image manipulation detection/localization (IMDL) research. It includes rich IMDL preprocessing, highly customizable model and loss function design, and efficient GPU-accelerated evaluation metric computation.
+  - title: User-Friendly
+    details: Installation via PyPI and command line invocation, separating training scripts from the core framework code, allowing you to customize your workflow without modifying the source code, making it easy to get started.
 
 footer: CC-BY-4.0 Licensed | Copyright © Colledge of Computer Science, Sichuan University
 ---

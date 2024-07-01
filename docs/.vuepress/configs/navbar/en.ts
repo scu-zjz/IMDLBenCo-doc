@@ -3,114 +3,60 @@ import { version } from '../meta.js'
 
 export const navbarEn: NavbarConfig = [
   {
-    text: 'Guide',
-    children: [
-      '/guide/introduction.md',
-      '/guide/getting-started.md',
-      '/guide/configuration.md',
-      '/guide/page.md',
-      '/guide/markdown.md',
-      '/guide/assets.md',
-      '/guide/i18n.md',
-      '/guide/deployment.md',
-      '/guide/theme.md',
-      '/guide/plugin.md',
-      '/guide/bundler.md',
-      '/guide/migration.md',
-      '/guide/troubleshooting.md',
-    ],
-  },
-  {
-    text: 'Reference',
-    children: [
-      {
-        text: 'Core',
-        children: [
+      text: 'Guide',
+      children: [
           {
-            text: 'CLI',
-            link: '/reference/cli.html',
-          },
-          '/reference/config.md',
-          '/reference/frontmatter.md',
-          '/reference/components.md',
-          '/reference/plugin-api.md',
-          '/reference/theme-api.md',
-          '/reference/client-api.md',
-          '/reference/node-api.md',
-        ],
-      },
-      {
-        text: 'Bundlers',
-        children: [
-          '/reference/bundler/vite.md',
-          '/reference/bundler/webpack.md',
-        ],
-      },
-      {
-        text: 'Ecosystem',
-        children: [
-          {
-            text: 'Default Theme',
-            link: 'https://ecosystem.vuejs.press/themes/default/',
+              text: 'Introduction',
+              children: [
+                  "/en/guide/base/introduction.md"
+              ],
           },
           {
-            text: 'Plugins',
-            link: 'https://ecosystem.vuejs.press/plugins/',
+              text: 'Quick Start',
+              children: [
+                  "/en/guide/quickstart/install.md"
+              ],
           },
-        ],
-      },
-    ],
+      ],
   },
 
   {
-    text: 'Learn More',
-    children: [
-      {
-        text: 'Advanced',
-        children: [
-          '/advanced/architecture.md',
-          '/advanced/plugin.md',
-          '/advanced/theme.md',
-          {
-            text: 'Cookbook',
-            link: '/advanced/cookbook/',
-          },
-        ],
-      },
-      {
-        text: 'Resources',
-        children: [
-          {
-            text: 'Ecosystem',
-            link: 'https://ecosystem.vuejs.press/',
-          },
-          {
-            text: 'MarketPlace',
-            link: 'https://marketplace.vuejs.press',
-          },
-          {
-            text: 'Contributing Guide',
-            link: 'https://github.com/vuepress/core/blob/main/CONTRIBUTING.md',
-          },
-        ],
-      },
-    ],
+      text: 'API Reference',
+      children: [
+          "/API/intro.md",
+      ],
   },
+
   {
-    text: `v${version}`,
-    children: [
-      {
-        text: 'Changelog',
-        link: 'https://github.com/vuepress/core/blob/main/CHANGELOG.md',
-      },
-      {
-        text: 'v1.x',
-        link: 'https://v1.vuepress.vuejs.org',
-      },
-      {
-        text: 'v0.x',
-        link: 'https://v0.vuepress.vuejs.org',
-      },
-    ],
+      text: 'Models & modules',
+
+
+      children: [
+          {
+              text: 'Model zoo',
+              link: '/model/model_zoo/intro&content.md',
+              children: [
+                  // '/zh/model/model_zoo/intro&content.md',
+                  '/model/model_zoo/leaderboard.md',
+
+              ],
+          },
+          {
+              text: 'Backbone models',
+              link: '/model/backbone/intro&content.md',
+              children: [
+                  // '/zh/model/backbone/intro&content.md',
+              ],
+          },
+          {
+              text: 'Extractor modules',
+              link: '/model/extractor/intro&content.md',
+              children: [
+                  // '/zh/model/extractor/intro&content.md',
+                  // '/zh/reference/bundler/webpack.md',
+              ],
+          },
+      ],
   },
+
 ]

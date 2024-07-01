@@ -1,77 +1,94 @@
 import type { SidebarConfig } from '@vuepress/theme-default'
 
 export const sidebarEn: SidebarConfig = {
-    '/guide/': [
+    '/en/guide/': [
         {
             text: 'Guide',
             children: [
-                '/guide/introduction.md',
-                '/guide/getting-started.md',
-                '/guide/configuration.md',
-                '/guide/page.md',
-                '/guide/markdown.md',
-                '/guide/assets.md',
-                '/guide/i18n.md',
-                '/guide/deployment.md',
-                '/guide/theme.md',
-                '/guide/plugin.md',
-                '/guide/bundler.md',
-                '/guide/migration.md',
-                '/guide/troubleshooting.md',
+                '/en/guide/base/introduction.md',
+                // '/en/guide/getting-started.md',
+                // '/en/guide/configuration.md',
+                // '/en/guide/page.md',
+                // '/en/guide/markdown.md',
+                // '/en/guide/assets.md',
+                // '/en/guide/i18n.md',
+                // '/en/guide/deployment.md',
+                // '/en/guide/theme.md',
+                // '/en/guide/plugin.md',
+                // '/en/guide/bundler.md',
+                // '/en/guide/migration.md',
+                // '/en/guide/troubleshooting.md',
+            ],
+        },
+        {
+            text: 'Quick Start',
+            children: [
+                '/en/guide/quickstart/install.md',
+                // '/en/guide/getting-started.md',
+                // '/en/guide/configuration.md',
+                // '/en/guide/page.md',
+                // '/en/guide/markdown.md',
+                // '/en/guide/assets.md',
+                // '/en/guide/i18n.md',
+                // '/en/guide/deployment.md',
+                // '/en/guide/theme.md',
+                // '/en/guide/plugin.md',
+                // '/en/guide/bundler.md',
+                // '/en/guide/migration.md',
+                // '/en/guide/troubleshooting.md',
             ],
         },
     ],
-    '/advanced/': [
+    '/en/API/': [
         {
-            text: 'Advanced',
+            text: 'Data Related',
             children: [
-                '/advanced/architecture.md',
-                '/advanced/plugin.md',
-                '/advanced/theme.md',
+                '/en/advanced/architecture.md',
+                '/en/advanced/plugin.md',
+                '/en/advanced/theme.md',
             ],
         },
         {
             text: 'Cookbook',
             children: [
-                '/advanced/cookbook/README.md',
-                '/advanced/cookbook/usage-of-client-config.md',
-                '/advanced/cookbook/adding-extra-pages.md',
-                '/advanced/cookbook/making-a-theme-extendable.md',
-                '/advanced/cookbook/passing-data-to-client-code.md',
-                '/advanced/cookbook/markdown-and-vue-sfc.md',
-                '/advanced/cookbook/resolving-routes.md',
+                '/en/advanced/cookbook/README.md',
+                '/en/advanced/cookbook/usage-of-client-config.md',
+                '/en/advanced/cookbook/adding-extra-pages.md',
+                '/en/advanced/cookbook/making-a-theme-extendable.md',
+                '/en/advanced/cookbook/passing-data-to-client-code.md',
+                '/en/advanced/cookbook/markdown-and-vue-sfc.md',
+                '/en/advanced/cookbook/resolving-routes.md',
             ],
         },
     ],
-    '/reference/': [
+    '/en/model/': [
         {
-            text: 'Core',
+            text: 'Model Zoo',
             collapsible: true,
             children: [
-                '/reference/cli.md',
-                '/reference/config.md',
-                '/reference/frontmatter.md',
-                '/reference/components.md',
-                '/reference/plugin-api.md',
-                '/reference/theme-api.md',
-                '/reference/client-api.md',
-                '/reference/node-api.md',
+                '/en/model/model_zoo/intro&content.md',
+                '/en/model/model_zoo/mvss.md',
+                '/en/model/model_zoo/trufor.md',
+                '/en/model/model_zoo/iml_vit.md'
             ],
         },
         {
-            text: 'Bundlers',
-            children: ['/reference/bundler/vite.md', '/reference/bundler/webpack.md'],
+            text: 'Bundler Tools',
+            children: [
+                '/en/reference/bundler/vite.md',
+                '/en/reference/bundler/webpack.md',
+            ],
         },
         {
             text: 'Ecosystem',
             children: [
                 {
                     text: 'Default Theme',
-                    link: 'https://ecosystem.vuejs.press/themes/default/',
+                    link: 'https://ecosystem.vuejs.press/en/themes/default/',
                 },
                 {
                     text: 'Plugins',
-                    link: 'https://ecosystem.vuejs.press/plugins/',
+                    link: 'https://ecosystem.vuejs.press/en/plugins/',
                 },
             ],
         },

@@ -1,6 +1,8 @@
 import { defaultTheme } from '@vuepress/theme-default'
 import { defineUserConfig } from 'vuepress/cli'
 import { viteBundler } from '@vuepress/bundler-vite'
+import { searchPlugin } from '@vuepress/plugin-search'
+import { redirectPlugin } from '@vuepress/plugin-redirect';
 
 
 import {
@@ -18,6 +20,11 @@ export default defineUserConfig({
 
   locales: {
     '/': {
+      lang: 'en-US',
+      title: 'IMDLBenCo Documentation',
+      description: 'Benchmark and Codebase for Image manipulation localization & detection',
+    },
+    '/en/': {
       lang: 'en-US',
       title: 'IMDLBenCo Documentation',
       description: 'Benchmark and Codebase for Image manipulation localization & detection',
@@ -42,9 +49,21 @@ export default defineUserConfig({
        * As the default locale of @vuepress/theme-default is English,
        * we don't need to set all of the locale fields
        */
+
       '/': {
         // navbar
         navbar: navbarEn,
+        selectLanguageName: 'English',
+        // sidebar
+        sidebar: sidebarEn,
+        // page meta
+        editLinkText: 'Edit this page on GitHub',
+      },
+
+      '/en/': {
+        // navbar
+        navbar: navbarEn,
+        selectLanguageName: 'English',
         // sidebar
         sidebar: sidebarEn,
         // page meta
@@ -87,4 +106,35 @@ export default defineUserConfig({
   }),
 
   bundler: viteBundler(),
+  plugins:[
+    // 一个本地的普通搜索，后续可以考虑换成docsearch
+    // https://ecosystem.vuejs.press/zh/plugins/search/search.html#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95
+    searchPlugin({
+        locales: {
+          '/en/': {
+            placeholder: 'Search',
+          },
+          '/zh': {
+            placeholder: '搜索',
+          },
+        },
+        // 最大搜索结果数
+        maxSuggestions: 10,
+        // 需要搜索的字段
+        searchMaxSuggestions: 10,
+        hotKeys: ['s', '/'],
+        // 排除标题中的某些词语
+        // isSearchable: (page) => page.path !== '/exclude.html',
+    }),
+    redirectPlugin,
+    {
+      redirect: [
+        {
+          from: '/',
+          to: '/en/readme.md',
+        },
+      ],
+    },
+  ],
+  // Redirection logic
 })
