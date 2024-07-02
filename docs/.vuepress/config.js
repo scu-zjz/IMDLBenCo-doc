@@ -38,7 +38,7 @@ export default defineUserConfig({
   theme: defaultTheme({
     logo: '/images/IMDL_BenCo.png',
     repo: 'scu-zjz/IMDLBenCo',
-    docsRepo: 'scu-zjz/IMDLBenCo-doc/docs',
+    docsRepo: 'scu-zjz/IMDLBenCo-doc',
     // docsRepo: 'vuepress/docs',
     docsDir: 'docs',
 
