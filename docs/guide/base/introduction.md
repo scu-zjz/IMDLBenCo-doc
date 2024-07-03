@@ -1,5 +1,5 @@
 # Introduction
-
+## Overview
 IMDLBenCo is a modular deep learning toolkit designed for image manipulation detection and localization (IMDL) tasks based on the [PyTorch](https://pytorch.org/) framework. It can be used for:
 - Reproducing state-of-the-art (SoTA) models in IMDL
 - Creating your own IMDL models
@@ -32,35 +32,6 @@ Under this philosophy, IMDL-BenCo's framework has the following features and adv
   - Integrated visualization tools like Tensorboard, only the input of images and scalars into specified interfaces are required.
   - Integrated complexity analysis (parameters, FLOPs), Grad-CAM, and other analysis tools for quick and easy completion of paper charts.
 
-## Framework Design
-
-The overview of the IMDL-BenCo framework design is shown below:
-
-![IMDL-BenCo Overview](/images/IMDLBenCo_overview.png)
-
-The main components include:
-- `Dataloader` for data loading and preprocessing
-- `Model Zoo` for managing all models and feature extractors
-- GPU-accelerated `Evaluator` for calculating evaluation metrics
-
-These classes are the most carefully designed parts of the framework and can be considered the main contributions of IMDL-BenCo.
-
-Additionally, there are auxiliary tools, including:
-- `Data Library` and `Data Manager` for dataset download and management (TODO)
-- Global registration mechanism `Register` for mapping `str` to specific `class` or `method`, making it easy to call corresponding models or methods via shell scripts for batch experiments.
-- `Visualize tools` for visualization analysis, currently only including Tensorboard
-
-And some miscellaneous interfaces and tools, including:
-- `PyTorch optimize tools`, mainly for PyTorch training-related interfaces and tools.
-- `Analysis tools`, mainly for various tools used for training or post-training analysis and archiving.
-
-All the above tools form classes or functions independently, with corresponding interfaces, ultimately achieving their respective functions through various `Training/Testing/Visualizing Scripts`.
-
-The CLI (Command Line Interface) of the entire IMDL-BenCo framework, similar to `git init` in Git, automatically generates all default `Training/Testing/Visualizing Scripts` scripts in an appropriate working path via `benco init`, for researchers to modify and use subsequently.
-
-Therefore, users are especially encouraged to modify the content of `Training/Testing/Visualizing Scripts` as needed, making reasonable use of the framework's functions to meet customization needs. According to the ❄️ and 🔥 symbols in the diagram, users are advised to create new classes or modify and design corresponding functions as needed to accomplish specific research tasks.
-
-Additionally, functions like dataset download and model checkpoint download are also achieved through CLI commands like `benco data`.
 
 ## Motivation
 

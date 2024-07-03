@@ -9,3 +9,6 @@ First, you need to install NodeJS, then use this command to host a local server 
 ```
 npm run docs:dev
 ```
+Then a website server will run at http://localhost:8080/IMDLBenCo-doc/
+
+After changes to the document, the content on the webpage will change automatically.

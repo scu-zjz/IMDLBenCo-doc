@@ -9,7 +9,8 @@ export const navbarZh: NavbarConfig = [
             {
                 text: '基本信息',
                 children: [
-                    "/zh/guide/base/introduction.md"
+                    "/zh/guide/base/introduction.md",
+                    "/zh/guide/base/framework.md",
                 ],
             },
             {
