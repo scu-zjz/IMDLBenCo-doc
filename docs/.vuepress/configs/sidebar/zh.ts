@@ -25,6 +25,7 @@ export const sidebarZh: SidebarConfig = {
             text: '快速上手',
             children: [
                 '/zh/guide/quickstart/install.md',
+                "/zh/guide/quickstart/1_demo.md"
                 // '/zh/guide/getting-started.md',
                 // '/zh/guide/configuration.md',
                 // '/zh/guide/page.md',

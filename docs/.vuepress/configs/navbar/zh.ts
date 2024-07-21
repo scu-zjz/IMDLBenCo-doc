@@ -16,7 +16,9 @@ export const navbarZh: NavbarConfig = [
             {
                 text: '快速上手',
                 children: [
-                    "/zh/guide/quickstart/install.md"
+                    "/zh/guide/quickstart/install.md",
+                    "/zh/guide/quickstart/1_demo.md"
+                    
                 ],
             },
         ],

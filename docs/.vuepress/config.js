@@ -3,7 +3,6 @@ import { defineUserConfig } from 'vuepress/cli'
 import { viteBundler } from '@vuepress/bundler-vite'
 import { searchPlugin } from '@vuepress/plugin-search'
 
-
 import {
   head,
   navbarEn,
@@ -127,6 +126,6 @@ export default defineUserConfig({
         // 排除标题中的某些词语
         // isSearchable: (page) => page.path !== '/exclude.html',
     })
-  ],
+  ]
   // Redirection logic
 })
