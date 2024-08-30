@@ -28,5 +28,15 @@ git checkout dev
 pip install -e .
 
 # 验证安装
-pip show imdl-benco
+pip show imdlbenco
 ```
+
+如果安装正常，执行`pip list`后应当看到
+```
+Package                 Version            Editable project location
+----------------------- ------------------ ------------------------------------------------------
+...
+IMDLBenCo               0.1.10             /mnt/data0/xiaochen/workspace/IMDLBenCo_pure/IMDLBenCo
+...
+```
+`Editable Project Location` 这一栏有对应的路径，即代表所有对于该路径下的python脚本修改可以直接生效于该Python环境内部，无需重新安装，非常便于调试。

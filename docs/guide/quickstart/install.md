@@ -29,5 +29,17 @@ git checkout dev
 pip install -e .
 
 # Verify the installation
-pip show imdl-benco
+pip show imdlbenco
 ```
+
+If the installation is successful, after executing `pip list`, you should see something like this:
+
+```
+Package                 Version            Editable project location
+----------------------- ------------------ ------------------------------------------------------
+...
+IMDLBenCo               0.1.10             /mnt/data0/xiaochen/workspace/IMDLBenCo_pure/IMDLBenCo
+...
+```
+
+The presence of a corresponding path in the `Editable project location` column indicates that any modifications to the Python scripts in this path will take effect directly in the Python environment without the need for reinstallation. This is very convenient for debugging.

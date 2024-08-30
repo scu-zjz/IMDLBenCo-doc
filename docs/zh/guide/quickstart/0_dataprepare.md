@@ -9,8 +9,9 @@
 - BenCo内部实现了3种不同的数据集格式。包含两个基础的`JsonDataset`和`ManiDataset`。和一个`BalanceDataset`。将数据集按照其中任何一种组织即可由后续模型读取。
  - `ManiDataset`，与CASIA数据集的组织方式相同，适合轻量开发，且**不需要引入真实图片**的场合。
  - `JsonDataset`，通过一个Json文件组织数据集，尤其适合需要引入真实图片的场合。
- - `BalancedDataset`，主要针对CAT-Net和TruFor的协议设计，如果不针对该协议复现则不需要关注。
+ - `BalancedDataset`，主要针对[CAT-Net](https://openaccess.thecvf.com/content/WACV2021/html/Kwon_CAT-Net_Compression_Artifact_Tracing_Network_for_Detection_and_Localization_of_WACV_2021_paper.html) 和 [TruFor](https://openaccess.thecvf.com/content/CVPR2023/html/Guillaro_TruFor_Leveraging_All-Round_Clues_for_Trustworthy_Image_Forgery_Detection_and_CVPR_2023_paper.html)的协议设计，如果不针对该协议复现则不需要关注。
 
+此外，在测试时需要同时输入大量的数据集，所以额外定义了一种Json用于输入大量数据集，在本段末尾有样例。
 
 ## 具体定义格式
 
@@ -70,3 +71,22 @@
     二维数组，每一行代表一个数据集，第一列代表使用到的数据集Class类型的字符串，第二列是该类型需要读取数据集的路径。
 
 将需要用的数据集按照需求，组织好后，即可开始考虑复现模型或实现自己的模型。
+
+
+## 测试用数据集JSON
+特别的，对于测试时，因为要同时输入大量的数据集完成测试，所以专门定义一个`test_dataset.json`来完成这个功能。
+
+Key为Tensorboard，日志输出等等Visualize功能时使用的字段名，Value为上述数据集的具体路径。
+
+样例：
+
+```JSON
+{
+    "Columbia": "/mnt/data0/public_datasets/IML/Columbia.json",
+    "NIST16_1024": "/mnt/data0/public_datasets/IML/NIST16_1024",
+    "NIST16_cleaned": "/mnt/data0/public_datasets/IML/NIST16_1024_cleaning",
+    "coverage": "/mnt/data0/public_datasets/IML/coverage.json",
+    "CASIAv1": "/mnt/data0/public_datasets/IML/CASIA1.0",
+    "IMD20_1024": "/mnt/data0/public_datasets/IML/IMD_20_1024"
+}
+```
