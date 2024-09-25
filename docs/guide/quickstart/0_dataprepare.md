@@ -74,6 +74,79 @@ Additionally, during testing, it is necessary to input a large amount of dataset
 
 After organizing the required datasets as needed, you can proceed to reproduce models or implement your own models.
 
+
+Except for the protocol, pre-processing is also needed to speed up the training.
+
+## Preprocessing High-Resolution Images
+Some datasets come with very high resolutions by default. For example, the NIST16 dataset and the compRAISE dataset in CAT-Protocol includes images with resolutions as high as 4000x4000. Directly reading these datasets during training can lead to an extremely high I/O load, especially when used as training data. 
+
+Therefore, we highly recommend resizing these images to a smaller size in advance, such as reducing the longer edge to 1024 while maintaining the aspect ratio. Otherwise, the training speed may be significantly slowed down. Please refer to [IMDL-BenCo issue #40](https://github.com/scu-zjz/IMDLBenCo/issues/40).
+
+We provide a multithreaded image resizing code here, which can efficiently convert all images in a directory to the desired resolution using a thread pool:
+```python
+import os
+from PIL import Image
+from concurrent.futures import ThreadPoolExecutor
+
+def process_image(filename, directory, output_directory, target_size):
+    try:
+        with Image.open(os.path.join(directory, filename)) as img:
+            width, height = img.size
+            print(f'Processing Image: {filename} | Resolution: {width}x{height}')
+
+            # Determine the scaling ratio for the longest side to be 1024
+            if max(width, height) > target_size:
+                if width > height:
+                    new_width = target_size
+                    new_height = int((target_size / width) * height)
+                else:
+                    new_height = target_size
+                    new_width = int((target_size / height) * width)
+
+                # Resize the image
+                img_resized = img.resize((new_width, new_height), Image.ANTIALIAS)
+
+                # Save the image to the specified folder
+                output_path = os.path.join(output_directory, filename)
+                img_resized.save(output_path)
+                print(f'Resized and saved {filename} to {output_directory} with resolution {new_width}x{new_height}')
+            else:
+                # If no resizing is needed, directly copy the image to the target folder
+                img.save(os.path.join(output_directory, filename))
+                print(f'Image {filename} already meets the target size and was saved without resizing.')
+            return 1  # Return a success count
+    except Exception as e:
+        print(f"Cannot process {filename}: {e}")
+        return 0  # Return a failure count
+
+def get_image_resolutions_and_resize(directory='.', output_directory='resized_images', target_size=1024):
+    # Create output directory if it doesn't exist
+    if not os.path.exists(output_directory):
+        os.makedirs(output_directory)
+
+    # Get all image files
+    image_files = [f for f in os.listdir(directory) if f.lower().endswith(('png', 'jpg', 'jpeg', 'bmp', 'gif', 'tiff'))]
+    
+    # Process images using a thread pool
+    total_processed = 0
+    with ThreadPoolExecutor() as executor:
+        futures = [executor.submit(process_image, filename, directory, output_directory, target_size) for filename in image_files]
+        
+        # Wait for all threads to complete and accumulate the number of processed images
+        for future in futures:
+            total_processed += future.result()
+
+    # Output the total number of images processed
+    print(f"\nTotal number of images processed: {total_processed}")
+
+# Execute the function
+get_image_resolutions_and_resize(
+    directory="./compRAISE",
+    output_directory="./compRAISE1024",
+    target_size=1024
+)
+```
+
 ## Test Dataset JSON
 Specifically, for testing purposes, since a large number of datasets need to be input simultaneously to complete the test, a dedicated `test_dataset.json` has been defined to fulfill this function.
 
