@@ -53,6 +53,10 @@
            "/mnt/data0/public_datasets/IML/IMD_20_1024"
        ],
        [
+            "JsonDataset",
+            "/mnt/data0/public_datasets/IML/compRAISE/compRAISE_1024_list.json"
+      ],
+       [
            "JsonDataset",
            "/mnt/data0/public_datasets/IML/tampCOCO/sp_COCO_list.json"
        ],

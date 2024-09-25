@@ -54,6 +54,10 @@ Additionally, during testing, it is necessary to input a large amount of dataset
          ],
          [
              "JsonDataset",
+             "/mnt/data0/public_datasets/IML/compRAISE/compRAISE_1024_list.json"
+         ],
+         [
+             "JsonDataset",
              "/mnt/data0/public_datasets/IML/tampCOCO/sp_COCO_list.json"
          ],
          [
