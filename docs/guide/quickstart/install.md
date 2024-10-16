@@ -2,15 +2,15 @@
 
 **Please note that, unlike most code provided in papers, the Benco repository is not intended to be used via methods like `git clone`, as the code involves numerous components required for engineering development. The expected method of usage is through `pip install`, treating it as a Python library.**
 
-## Regular Users
-Installing IMDL-BenCo is very straightforward. Currently, it is managed via PyPI, so you can install it with the following command:
+## For Regular Users  
+If you only wish to use IMDL-BenCo to reproduce the paper and build your own model, the installation process is very simple. Currently, IMDL-BenCo is managed via PyPI, and you can complete the installation by running the following command:
 
 ```shell
 pip install imdlbenco
 ```
 
-## Developers
-If you are attempting to develop new features for the **IMDL-BenCo Python Library** locally and contribute to the repository, it is recommended that you first uninstall any existing IMDL-BenCo installations in your environment. Then, clone your forked IMDL-BenCo repository, switch to the `dev` branch to get the latest "development version," and use the special command `pip install -e .` to complete the local installation. This will ensure that your current Python environment always executes the IMDL-BenCo library scripts based on the files in your local directory, automatically updating behavior when files are modified, making it convenient for debugging and development.
+## For Developers Contributing to the Official Repository  
+If you are trying to develop new features for the **IMDL-BenCo Python Library** and contribute to the official repository, follow the instructions in this section. It is recommended to first uninstall any previously installed versions of IMDL-BenCo in your environment. Then, clone your forked repository of IMDL-BenCo, switch to the `dev` branch to get the latest "development version," and use the special command `pip install -e .` to complete the local installation. This will ensure that the current Python environment always executes the IMDL-BenCo library based on the scripts in this directory and automatically updates the corresponding behavior when files are updated, which is highly convenient for debugging and development. 
 
 ```shell
 # Uninstall any existing IMDL-BenCo library
