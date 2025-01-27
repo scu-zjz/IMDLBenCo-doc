@@ -8,6 +8,24 @@ If you only wish to use IMDL-BenCo to reproduce the paper and build your own mod
 ```shell
 pip install imdlbenco
 ```
+You can run the following command to check If the python package of IMDLBenCo is installed properly and check for the latest version. (This repository is under rapid development and will release new version offten.)
+```shell
+benco -v 
+```
+
+```shell
+benco --version
+```
+If you have installed latest version, you will see the following content:
+```
+IMDLBenCo codebase version: 0.1.21
+        Checking for updates...
+        Local version:  0.1.21
+        PyPI newest version:  0.1.21
+You are using the latest version: 0.1.21.
+```
+Just like other command line interface, you can run `benco -h` to check for help and guidance.
+
 
 ## For Developers Contributing to the Official Repository  
 If you are trying to develop new features for the **IMDL-BenCo Python Library** and contribute to the official repository, follow the instructions in this section. It is recommended to first uninstall any previously installed versions of IMDL-BenCo in your environment. Then, clone your forked repository of IMDL-BenCo, switch to the `dev` branch to get the latest "development version," and use the special command `pip install -e .` to complete the local installation. This will ensure that the current Python environment always executes the IMDL-BenCo library based on the scripts in this directory and automatically updates the corresponding behavior when files are updated, which is highly convenient for debugging and development. 

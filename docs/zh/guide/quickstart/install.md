@@ -7,6 +7,24 @@
 ```shell
 pip install imdlbenco
 ```
+如果安装成功，在命令行中运行如下指令可以验证是否安装成功，并且自动检查是否有新版本。（本仓库处于迭代开发中，最好经常检查版本更新）
+```shell
+benco -v 
+```
+
+```shell
+benco --version
+```
+如果正常安装了最新版本，应该可以看到如下内容：
+```
+IMDLBenCo codebase version: 0.1.21
+        Checking for updates...
+        Local version:  0.1.21
+        PyPI newest version:  0.1.21
+You are using the latest version: 0.1.21.
+```
+
+像其他的命令行工具一样，运行`benco -h`可以查看帮助引导等内容。
 
 ## 对于想为官方仓库贡献的开发者
 如果你试图为IMDL-BenCo的**Python Library**在开发新功能并贡献到官方仓库，则需要按照本段完成。推荐你先在环境中卸载所有已经安装的IMDL-BenCo，然后克隆您fork过的IMDL-BenCo的仓库后，切换到dev分支获得最新的“开发版本”后，并使用特殊的`pip install -e . `指令完成本地安装，这会使得当前Python环境始终根据本路径下的包所含的脚本执行IMDL-BenCo库的行文，并在更新文件时自动更新相应行为，非常便于调试开发。
