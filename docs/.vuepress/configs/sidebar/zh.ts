@@ -27,6 +27,7 @@ export const sidebarZh: SidebarConfig = {
                 '/zh/guide/quickstart/install.md',
                 "/zh/guide/quickstart/0_dataprepare.md",
                 "/zh/guide/quickstart/2_model_zoo.md",
+                "/zh/guide/quickstart/3_load_ckpt.md",
                 "/zh/guide/quickstart/1_demo.md",
 
                 // '/zh/guide/getting-started.md',

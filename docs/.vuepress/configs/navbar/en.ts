@@ -18,6 +18,7 @@ export const navbarEn: NavbarConfig = [
                     "/guide/quickstart/install.md",
                     "/guide/quickstart/0_dataprepare.md",
                     "/guide/quickstart/2_model_zoo.md",
+                    "/guide/quickstart/3_load_ckpt.md",
                     "/guide/quickstart/1_demo.md"
                     
                 ],
