@@ -34,36 +34,36 @@ export const navbarZh: NavbarConfig = [
         ],
     },
 
-    {
-        text: '模型与模块',
+    // {
+    //     text: '模型与模块',
 
 
-        children: [
-            {
-                text: 'Model zoo',
-                link: '/zh/model/model_zoo/intro&content.md',
-                children: [
-                    // '/zh/model/model_zoo/intro&content.md',
-                    '/zh/model/model_zoo/leaderboard.md',
+    //     children: [
+    //         {
+    //             text: 'Model zoo',
+    //             link: '/zh/model/model_zoo/intro&content.md',
+    //             children: [
+    //                 // '/zh/model/model_zoo/intro&content.md',
+    //                 '/zh/model/model_zoo/leaderboard.md',
 
-                ],
-            },
-            {
-                text: 'Backbone models',
-                link: '/zh/model/backbone/intro&content.md',
-                children: [
-                    // '/zh/model/backbone/intro&content.md',
-                ],
-            },
-            {
-                text: 'Extractor modules',
-                link: '/zh/model/extractor/intro&content.md',
-                children: [
-                    // '/zh/model/extractor/intro&content.md',
-                    // '/zh/reference/bundler/webpack.md',
-                ],
-            },
-        ],
-    },
+    //             ],
+    //         },
+    //         {
+    //             text: 'Backbone models',
+    //             link: '/zh/model/backbone/intro&content.md',
+    //             children: [
+    //                 // '/zh/model/backbone/intro&content.md',
+    //             ],
+    //         },
+    //         {
+    //             text: 'Extractor modules',
+    //             link: '/zh/model/extractor/intro&content.md',
+    //             children: [
+    //                 // '/zh/model/extractor/intro&content.md',
+    //                 // '/zh/reference/bundler/webpack.md',
+    //             ],
+    //         },
+    //     ],
+    // },
 
 ]

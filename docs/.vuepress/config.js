@@ -2,7 +2,7 @@ import { defaultTheme } from '@vuepress/theme-default'
 import { defineUserConfig } from 'vuepress/cli'
 import { viteBundler } from '@vuepress/bundler-vite'
 import { searchPlugin } from '@vuepress/plugin-search'
-
+// import { markdownTabPlugin } from '@vuepress/plugin-markdown-tab'
 import {
   head,
   navbarEn,
@@ -109,6 +109,10 @@ export default defineUserConfig({
   plugins:[
     // 一个本地的普通搜索，后续可以考虑换成docsearch
     // https://ecosystem.vuejs.press/zh/plugins/search/search.html#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95
+    // 以下是docsearch的官方网站和文档
+    // https://ecosystem.vuejs.press/zh/plugins/search/docsearch.html
+    // https://docsearch.algolia.com/docs/tips/
+    // https://www.algolia.com/developers?utm_source=vuepress.vuejs.org&utm_medium=referral&utm_content=powered_by&utm_campaign=docsearch
     searchPlugin({
         locales: {
           '/en/': {
@@ -125,7 +129,8 @@ export default defineUserConfig({
         hotKeys: ['s', '/'],
         // 排除标题中的某些词语
         // isSearchable: (page) => page.path !== '/exclude.html',
-    })
+    }),
   ]
   // Redirection logic
 })
+

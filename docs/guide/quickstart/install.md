@@ -9,13 +9,16 @@ If you only wish to use IMDL-BenCo to reproduce the paper and build your own mod
 pip install imdlbenco
 ```
 You can run the following command to check If the python package of IMDLBenCo is installed properly and check for the latest version. (This repository is under rapid development and will release new version offten.)
-```shell
-benco -v 
-```
-
-```shell
-benco --version
-```
+::: tabs  
+@tab Abbreviated Command  
+```shell  
+benco -v  
+```  
+@tab Full Command  
+```shell  
+benco --version  
+```  
+:::
 If you have installed latest version, you will see the following content:
 ```
 IMDLBenCo codebase version: 0.1.21

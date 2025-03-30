@@ -8,13 +8,20 @@
 pip install imdlbenco
 ```
 如果安装成功，在命令行中运行如下指令可以验证是否安装成功，并且自动检查是否有新版本。（本仓库处于迭代开发中，最好经常检查版本更新）
+
+
+::: tabs
+@tab 简写命令
 ```shell
 benco -v 
 ```
-
+@tab 完整命令
 ```shell
 benco --version
 ```
+:::
+
+
 如果正常安装了最新版本，应该可以看到如下内容：
 ```
 IMDLBenCo codebase version: 0.1.21
