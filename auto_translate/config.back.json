@@ -1,0 +1,5 @@
+{
+    "api_key": "<your token>",
+    "target_dir": "D:\\workspace\\IMDLBenCo-doc\\docs",
+    "path_list": "markdown_paths.json"
+}
