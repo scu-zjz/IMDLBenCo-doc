@@ -6,10 +6,10 @@
 目前暂时需要手动在每一个工作路径下管理相应的`json`或数据集路径完成部署。
 
 ## 数据集格式和特点
-- BenCo内部实现了3种不同的数据集格式。包含两个基础的`JsonDataset`和`ManiDataset`。和一个`BalanceDataset`。将数据集按照其中任何一种组织即可由后续模型读取。
+- IMDL-BenCo内部实现了3种不同的数据集格式。包含两个基础的`JsonDataset`和`ManiDataset`，用于读取单个数据集。和一个`BalanceDataset`，按照一种特殊的采样策略同时管理多个数据集。将数据集按照其中任何一种组织即可由后续模型读取。
   - `ManiDataset`，与CASIA数据集的组织方式相同，适合轻量开发，且**不需要引入真实图片**的场合。
   - `JsonDataset`，通过一个Json文件组织数据集，尤其适合需要引入真实图片的场合。
-  - `BalancedDataset`，主要针对[CAT-Net](https://openaccess.thecvf.com/content/WACV2021/html/Kwon_CAT-Net_Compression_Artifact_Tracing_Network_for_Detection_and_Localization_of_WACV_2021_paper.html) 和 [TruFor](https://openaccess.thecvf.com/content/CVPR2023/html/Guillaro_TruFor_Leveraging_All-Round_Clues_for_Trustworthy_Image_Forgery_Detection_and_CVPR_2023_paper.html)的协议设计，如果不针对该协议复现则不需要关注。
+  - `BalancedDataset`，这种数据集管理了一个字典，存放了多个`ManiDataset`或`JsonDataset`对象，在每一个Epoch分别从它所包含的所有子数据集中**随机采样n张图片**（默认只采样1800张）进行，所以实际`一个Epoch参与训练的图片数量=数据集数量 × n`，但当数据集足够大时，多个Epoch下图片的丰富度仍然可以很高。并且，避免训练后的模型过于向大数据集“过拟合”。`BalancedDataset`主要针对[CAT-Net](https://openaccess.thecvf.com/content/WACV2021/html/Kwon_CAT-Net_Compression_Artifact_Tracing_Network_for_Detection_and_Localization_of_WACV_2021_paper.html) 和 [TruFor](https://openaccess.thecvf.com/content/CVPR2023/html/Guillaro_TruFor_Leveraging_All-Round_Clues_for_Trustworthy_Image_Forgery_Detection_and_CVPR_2023_paper.html)的协议设计，如果不针对该协议复现则不需要关注。
 
 
 

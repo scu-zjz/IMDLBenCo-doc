@@ -6,12 +6,11 @@ The dataset-related functionality and interfaces will be managed uniformly by th
 Currently, you need to manually manage the corresponding `json` or dataset paths in each working directory to complete the setup.
 
 ## Dataset Formats and Characteristics
-- IMDL-BenCo implements three different dataset formats, including two basic types: `JsonDataset` and `ManiDataset`, as well as one `BalancedDataset`. Organizing your dataset in any of these formats will allow subsequent models to read it.
-  - `ManiDataset`: This follows the organizational structure of the CASIA dataset, suitable for lightweight development scenarios where **no authentic images** are required.
-  - `JsonDataset`: This organizes the dataset through a JSON file, especially suitable for scenarios where authentic images are needed.
-  - `BalancedDataset`: Mainly designed for the [CAT-Net](https://openaccess.thecvf.com/content/WACV2021/html/Kwon_CAT-Net_Compression_Artifact_Tracing_Network_for_Detection_and_Localization_of_WACV_2021_paper.html) and [TruFor](https://openaccess.thecvf.com/content/CVPR2023/html/Guillaro_TruFor_Leveraging_All-Round_Clues_for_Trustworthy_Image_Forgery_Detection_and_CVPR_2023_paper.html) protocols, and can be ignored if not reproducing these protocols.
 
-
+- IMDL-BenCo internally supports three different dataset formats, including two fundamental formats, `JsonDataset` and `ManiDataset`, which are used for reading individual datasets, and one special format, `BalanceDataset`, which manages multiple datasets simultaneously using a specific sampling strategy. Any dataset can be structured in one of three formats for subsequent model training.
+  - `ManiDataset` follows the same organization as the CASIA dataset, making it suitable for lightweight development scenarios where **real images are not required**.
+  - `JsonDataset` organizes the dataset using a JSON file, making it particularly suitable for scenarios that require real images.
+  - `BalancedDataset` manages a dictionary containing multiple `ManiDataset` or `JsonDataset` objects. In each epoch, it **randomly samples n images** (default: 1800) from all the included sub-datasets. As a result, the actual number of images used for training in one epoch is calculated as `number of datasets × n`. However, when the dataset is large enough, the diversity of images across multiple epochs remains high. Additionally, this approach helps prevent the trained model from **overfitting to larger datasets**. `BalancedDataset` is primarily designed for protocols related to [CAT-Net](https://openaccess.thecvf.com/content/WACV2021/html/Kwon_CAT-Net_Compression_Artifact_Tracing_Network_for_Detection_and_Localization_of_WACV_2021_paper.html) and [TruFor](https://openaccess.thecvf.com/content/CVPR2023/html/Guillaro_TruFor_Leveraging_All-Round_Clues_for_Trustworthy_Image_Forgery_Detection_and_CVPR_2023_paper.html). If you are not reproducing these protocols, you do not need to focus on this format.
 Additionally, during testing, it is necessary to input a large amount of datasets simultaneously, so an additional JSON format was defined for inputting large datasets. A sample is provided at the end of this section.
 
 ## Specific Format Definitions
