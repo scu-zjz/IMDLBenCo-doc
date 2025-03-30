@@ -8,15 +8,18 @@
 
 ### 生成默认脚本
 
-在一个干净的工作路径下，执行如下命令行指令即可生成最简运行所需的全部脚本
-```bash
+在一个干净的工作路径下，执行如下命令行指令即可生成最简运行所需的全部脚本，作为默认指令，省略base执行的也是同样的命令。
+
+::: tabs
+@tab 完整命令
+```shell
 benco init base
 ```
-作为默认的指令，该命令也可以这样省略：
-
-```bash
+@tab 简写命令
+```shell
 benco init
 ```
+:::
 
 正常执行后会看到在当前路径下生成了如下文件，它们的用途如注释所示：
 ```bash
@@ -33,7 +36,9 @@ benco init
 └── train.py                    # 训练脚本的实际Python代码
 ```
 
-**特别注意**：如果已经生成过脚本，并且做出一定修改后，请一定**小心二次调用**`benco init`，IMDLBenCo会在询问后逐一覆盖文件，如果误操作可能导致丢失你已有的修改，务必小心。推荐使用git版本管理来避免该操作导致丢失已有代码。
+::: warning 特别注意
+如果已经生成过脚本，并且做出一定修改后，请一定**小心二次调用**`benco init`，IMDLBenCo会在询问后逐一覆盖文件，如果误操作可能导致丢失你已有的修改，务必小心。推荐使用git版本管理来避免该操作导致丢失已有代码。
+:::
 
 
 ### 模型文件设计范式
@@ -126,17 +131,20 @@ if __name__ == "__main__":
 - 第5行：`@MODELS.register_module()`
   - 基于注册机制注册该模型到IMDLBenCo的全局注册器中，便于其他脚本通过字符串快速调用该类。
   - 如果对注册机制不熟悉，一句话解释就是：**自动维护了一个从字符串到对应类的字典映射**，便于“自由地”传递参数。
+  - 实际使用时，通过向启动训练的shell脚本的`--model`函数传入注册过的“类名同名字符串”即可使得框架加载对应的自定义or框架内已有模型。具体请参考[此链接](https://github.com/scu-zjz/IMDLBenCo/blob/4c6a2937c3cae8d6ff26bf85e9bad0c5ec467468/IMDLBenCo/statics/model_zoo/runs/demo_train_mvss.sh#L10)。
 - 第29行、第37行：**损失函数必须定义在`__init__()`或者`forward()`函数中**
 - 第31行：定义forward函数时`def forward(self, image, mask, label, *args, **kwargs):`
   - 必须要带Python函数解包所需的`*args, **kwargs`，以接收未使用的参数。
     - 如果你不熟悉请参考[Python官方文档-4.8.2. Keyword Arguments](https://docs.python.org/3/tutorial/controlflow.html#keyword-arguments)，[Python官方文档中文版-4.8.2 关键字参数](https://docs.python.org/zh-cn/3/tutorial/controlflow.html#keyword-arguments)
   - 形参变量名必须与[`abstract_dataset.py`](https://github.com/scu-zjz/IMDLBenCo/blob/main/IMDLBenCo/datasets/abstract_dataset.py)中返回的字典`data_dict`包含的字段名完全一致。默认字段如下表所示：
-    - |Key|含义|类型|
-      |:-:|:-:|:-:|
+    - |Key名|含义|类型|
+      |:-:|-|:-:|
       |image|输入的原始图片|Tensor(B,3,H,W)|
       |mask|预测目标的掩码|Tensor(B,1,H,W)|
+      |edge_mask|根据mask进行[腐蚀（erosion）与膨胀（dilation）](https://docs.opencv.org/3.4/db/df6/tutorial_erosion_dilatation.html)后获得的仅有边界为白色的mask，以供各种需要边界损失函数的模型使用。为了减轻计算开销，必须在训练`shell`中传入`--edge_mask_width 7`这样的参数后，对应的dataloader才会返回这个键值对供模型的`forward()`函数取用，参考`IML-ViT`的[shell](https://github.com/scu-zjz/IMDLBenCo/blob/4c6a2937c3cae8d6ff26bf85e9bad0c5ec467468/IMDLBenCo/statics/model_zoo/runs/demo_train_iml_vit.sh#L22)和[模型forward函数](https://github.com/scu-zjz/IMDLBenCo/blob/4c6a2937c3cae8d6ff26bf85e9bad0c5ec467468/IMDLBenCo/model_zoo/iml_vit/iml_vit.py#L125)函数。<br>如果不需要边界mask来计算后续损失，则既不需要在shell中传入，也不需要在模型的`forward()`函数形参中准备名为`edge_mask`的形参，参考`ObjectFormer`的[shell](https://github.com/scu-zjz/IMDLBenCo/blob/main/IMDLBenCo/statics/model_zoo/runs/demo_train_object_former.sh)和[模型forward函数](https://github.com/scu-zjz/IMDLBenCo/blob/4c6a2937c3cae8d6ff26bf85e9bad0c5ec467468/IMDLBenCo/model_zoo/object_former/object_former.py#L285)。|Tensor(B,1,H,W)|
       |lable|Image-level预测的零一标签|Tensor(B,1)|
-      |shape|输入的图片的形状|Tensor(B,1,1), 分别代表H和W|
+      |shape|经过padding或resize后，传入模型训练的图片的形状|Tensor(B,2), 两个维度各一个值，分别代表H和W|
+      |original_shape|最开始读取输入的图片的形状|Tensor(B,2), 两个维度各一个值，分别代表H和W|
       |name|图片的路径和文件名|str|
       |shape_mask|在padding的情况下，仅计算该mask内为1的全部像素作为最终指标，1默认为和原图一样大的方形区域|Tensor(B,1,H,W)|
     - 对于不同的任务，可以按需取用这些字段输入到模型中使用。

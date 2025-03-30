@@ -13,3 +13,7 @@ npm run docs:dev
 
 ## Reference
 Thanks to [VUE-Press](https://vuepress.vuejs.org/).
+
+## Special plugin Reference
+- [Markdown related](https://ecosystem.vuejs.press/zh/plugins/markdown/markdown-hint.html)
+- [Search Related](https://ecosystem.vuejs.press/zh/plugins/search/docsearch.html)
