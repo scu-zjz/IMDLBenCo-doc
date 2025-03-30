@@ -28,3 +28,8 @@ yarn-error.log*
 
 # Windows system files
 Thumbs.db
+
+# API key
+/auto_translate/config.json
+
+/auto_translate/docs/*
