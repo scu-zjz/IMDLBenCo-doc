@@ -3,7 +3,7 @@ home: true
 title: Home
 heroImage: images/IMDL_BenCo.png
 actions:
-  - text: Get Started
+  - text: Quick Start
     link: /guide/quickstart/install.md
     type: primary
 
@@ -26,4 +26,9 @@ footer: CC-BY-4.0 Licensed | Copyright © Colledge of Computer Science, Sichuan 
 
 **Important! The current documentation and tutorials are not complete. This is a project that requires a lot of manpower, and we will do our best to complete it as quickly as possible.**
 
-**Currently, you can use the demo by following the brief tutorial provided in the [Readme of the official Github repository](https://github.com/scu-zjz/IMDLBenCo/blob/main/README.md)!**
+## One line install
+```shell
+pip install imdlbenco
+```
+
+For further information, please see [guide](/guide/quickstart/install.md).

@@ -24,4 +24,9 @@ footer: CC-BY-4.0 协议 | 版权所有 © 四川大学计算机学院
 ---
 **重要！目前的文档和教程并不完善，这是个需要很多劳动力的任务，我们会尽最大可能快速完成。**
 
-**目前你可以按照[Github官方仓库的Readme](https://github.com/scu-zjz/IMDLBenCo/blob/main/README.md)下方的简要的教程使用demo!**
+## 一行代码，轻松安装
+```shell
+pip install imdlbenco
+```
+
+获取更多详情，请查阅[指南](/guide/quickstart/install.md).

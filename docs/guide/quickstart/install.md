@@ -43,9 +43,6 @@ git clone https://github.com/your_name/IMDL-BenCo.git
 # Enter the project directory
 cd IMDL-BenCo
 
-# Switch to the dev branch
-git checkout dev
-
 # Perform a local development installation using `pip install -e .`
 pip install -e .
 
