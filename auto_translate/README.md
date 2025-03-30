@@ -198,3 +198,6 @@ python translate_files.py --config config.json
 - 添加翻译进度条
 - 支持其他翻译引擎（DeepL、Google等）
 - 增加HTML/代码块的跳过处理
+
+## 如果仍然出现超长的问题
+参考这个教程：https://platform.moonshot.cn/docs/guide/use-partial-mode-feature-of-kimi-api#partial-mode-%E4%B8%AD%E7%9A%84-name
