@@ -1,6 +1,17 @@
-# 使用Model Zoo配合checkpoint快速测试
-我们在百度网盘公开了一些我们论文中report的指标所使用的模型权重以供参考。根据模型名称以及训练时使用的数据集命名，在百度网盘的下载链接如下：
+# 案例二：使用Model Zoo配合checkpoint快速测试
 
+我们认为学习最快的方式就是“Learn by Doing”（边做边学），所以通过几个案例来帮助使用者快速上手。
+
+总的来说IMDL-BenCo通过类似`git`、`conda`这样的命令行调用方式帮助你快速完成图像篡改检测科研项目的开发。如果你学过vue等前端技术，那按照vue-cli来理解IMDLBenCo的设计范式会非常轻松。
+
+无论如何，请先参考[安装](./install.md)完成IMDL-BenCo的安装。
+
+:::tip 本章动机
+本章提供了按照[IMDL-BenCo论文](https://proceedings.neurips.cc/paper_files/paper/2024/hash/f280a398c243b5fdaa09f57ece880fc9-Abstract-Datasets_and_Benchmarks_Track.html)中大部分实验中用到的checkpoint，可以根据本案例完成推理和指标测试，无需训练。
+:::
+
+## Checkpoint 链接
+我们在百度网盘公开了一些我们论文中report的指标所使用的模型权重以供参考。根据模型名称以及训练时使用的数据集命名，在百度网盘的下载链接如下：
 
 - 百度网盘：imdlbenco_ckpt
   - 链接: [https://pan.baidu.com/s/1DtkOwLCTunvI3d_GAAj2Dg?pwd=bchm](https://pan.baidu.com/s/1DtkOwLCTunvI3d_GAAj2Dg?pwd=bchm) 、

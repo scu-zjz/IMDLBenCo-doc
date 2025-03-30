@@ -1,5 +1,14 @@
-# 使用Model Zoo复现SoTA论文
-大部分人初次使用IMDL-Benco应该都是想复现SoTA论文，如果你有一定深度学习经验（PyTorch框架，Linux的Shell脚本，多卡并行的参数等等前置知识），这会非常简单。
+# 案例一：使用Model Zoo训练复现SoTA论文
+我们认为学习最快的方式就是“Learn by Doing”（边做边学），所以通过几个案例来帮助使用者快速上手。
+
+总的来说IMDL-BenCo通过类似`git`、`conda`这样的命令行调用方式帮助你快速完成图像篡改检测科研项目的开发。如果你学过vue等前端技术，那按照vue-cli来理解IMDLBenCo的设计范式会非常轻松。
+
+无论如何，请先参考[安装](./install.md)完成IMDL-BenCo的安装。
+
+:::tip 本章动机
+大部分人初次使用IMDL-Benco应该都是想训练并复现SoTA论文，如果你有一定深度学习经验（PyTorch框架，Linux的Shell脚本，多卡并行的参数等等前置知识），这会非常简单。本章会告诉你复现所需的所有流程。
+:::
+
 
 ## 通过benco init初始化
 安装好benco后，创建一个干净的空文件夹作为工作路径，然后运行如下指令
@@ -49,8 +58,13 @@ benco init model_zoo
 ├── test_robust.py
 └── train.py
 ```
-其中，根目录下包含了实际承担逻辑的训练及测试脚本`train.py`,`test.py`, `test_robust.py`。**我们的设计理念鼓励按照您的需求对于这些脚本进行修改！**
+其中，根目录下包含了实际承担逻辑的训练及测试脚本`train.py`,`test.py`, `test_robust.py`。
 
+::: tip 开发者小贴士，必看！
+我们的设计理念**鼓励按照您的需求对于这些脚本进行修改**！比如修改`evaluator`以添加更多的测试指标；修改的`transform以`改变训练的预处理，或者重写测试逻辑等等。
+
+IMDL-BenCo只是提升开发效率的框架，为了尽可能提高面对科研工作时的灵活性，我们选择通过`代码生成`而非耦合源码内的各种组件的方式，将最大的自由交还给使用者。请尽情发挥您的机智修改吧！
+:::
 
 其中`./runs`文件夹下包含了所有用于启动对应训练的`shell`脚本，这些shell会调用根目录下的Python脚本，根据命名可以确认该脚本的功能、模型名。
  
@@ -90,17 +104,8 @@ benco init model_zoo
 
 所以暂时可以通过查看模型的`__init__()`函数来理解功能。
 
-以TruFor为例，训练sh脚本`demo_train_trufor.sh`中的这几个字段：
-```
-    --np_pretrain_weights "/mnt/data0/dubo/workspace/IMDLBenCo/IMDLBenCo/model_zoo/trufor/noiseprint.pth" \
-    --mit_b2_pretrain_weights "/mnt/data0/dubo/workspace/IMDLBenCo/IMDLBenCo/model_zoo/trufor/mit_b2.pth" \
-    --config_path "./configs/trufor.yaml" \
-    --phase 2 \
-```
-
-会被Benco直接传递到TruFor这个`nn.module`的`__init__`函数中，即[这个位置](https://github.com/scu-zjz/IMDLBenCo/blob/f4d158312b8f39df07aa41f468529c417bc9a765/IMDLBenCo/model_zoo/trufor/trufor.py#L15-L18)。
-
-```
+以TruFor为例，我们可以看到模型的`nn.Module`的具体实现中，需要对`__init__`函数传入大量的形参以正确初始化模型，[该位置代码链接](https://github.com/scu-zjz/IMDLBenCo/blob/f4d158312b8f39df07aa41f468529c417bc9a765/IMDLBenCo/model_zoo/trufor/trufor.py#L15-L18)。
+```python
 @MODELS.register_module()
 class Trufor(nn.Module):
     def __init__(self,
@@ -113,8 +118,19 @@ class Trufor(nn.Module):
         super(Trufor, self).__init__()
 ```
 
+在BenCo框架中，我们可以通过向训练sh脚本`demo_train_trufor.sh`中传入同名字段并填入对应参数，即可正确初始化对应模型，[该位置链接](https://github.com/scu-zjz/IMDLBenCo/blob/4c6a2937c3cae8d6ff26bf85e9bad0c5ec467468/IMDLBenCo/statics/model_zoo/runs/demo_train_trufor.sh#L14-L18)：
+```shell
+    --np_pretrain_weights "/mnt/data0/dubo/workspace/IMDLBenCo/IMDLBenCo/model_zoo/trufor/noiseprint.pth" \
+    --mit_b2_pretrain_weights "/mnt/data0/dubo/workspace/IMDLBenCo/IMDLBenCo/model_zoo/trufor/mit_b2.pth" \
+    --config_path "./configs/trufor.yaml" \
+    --phase 2 \
+```
 
-<p><span style="color: red; font-weight: bold;">注意！！！Model_zoo中各个shell脚本中所有的超参数均为作者团队官方目前的实验最优情况。</span></p>
+
+:::important 重要信息
+**注意！！！Model_zoo中各个shell脚本中所有的超参数均为作者团队官方目前的实验最优情况。**
+:::
+
 
 
 ## 预训练权重下载
@@ -147,7 +163,7 @@ sh ./runs/demo_XXXX_XXXX.sh
 
 所有的`checkpoint-XX.pth`也会输出到`output_dir_xxx`中，以供后续使用。
 
-**强烈推荐通过如下指令使用TensorBoard监视训练过程，Benco提供了大量的自动API接口完成可视化，便于确认训练是否正常。**
+**强烈推荐通过如下指令使用TensorBoard监视训练过程，Benco提供了大量的自动API接口完成可视化，便于确认训练是否正常，并查看一些输出的mask结果。**
 ```
 tensorboard --logdir ./
 ```

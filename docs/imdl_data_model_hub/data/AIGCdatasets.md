@@ -1,0 +1,1 @@
+# AIGC Generated Content Dataset Index

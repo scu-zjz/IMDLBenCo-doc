@@ -17,9 +17,9 @@ export const navbarEn: NavbarConfig = [
                 children: [
                     "/guide/quickstart/install.md",
                     "/guide/quickstart/0_dataprepare.md",
-                    "/guide/quickstart/2_model_zoo.md",
-                    "/guide/quickstart/3_load_ckpt.md",
-                    "/guide/quickstart/1_demo.md"
+                    "/guide/quickstart/1_model_zoo.md",
+                    "/guide/quickstart/2_load_ckpt.md",
+                    "/guide/quickstart/3_demo.md"
                     
                 ],
             },
@@ -32,7 +32,26 @@ export const navbarEn: NavbarConfig = [
             "/API/intro.md",
         ],
     },
+    {
+        text: 'IMDL data & model hub',
 
+        children: [
+            {
+                text: 'Datasets',
+                children: [
+                    "/imdl_data_model_hub/data/IMDLdatasets.md",
+                    "/imdl_data_model_hub/data/AIGCdatasets.md"
+                ],
+            },
+            {
+                text: 'Models & Papers',
+                children: [
+                    "/imdl_data_model_hub/models/benco.md",
+                    "/imdl_data_model_hub/models/general.md"
+                ],
+            }
+        ]
+    }
     // {
     //     text: 'Models & modules',
 

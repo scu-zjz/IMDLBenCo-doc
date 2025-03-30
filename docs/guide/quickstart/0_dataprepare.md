@@ -1,22 +1,35 @@
 # Dataset Preparation
 
 ## Important
-The dataset-related functionality and interfaces will be managed uniformly by the BenCo CLI in future versions.
+The functionality and interfaces of the dataset section will be managed by the benco CLI in subsequent versions.
 
-Currently, you need to manually manage the corresponding `json` or dataset paths in each working directory to complete the setup.
+For now, it is temporarily necessary to manually manage the corresponding `json` or dataset paths in each working path to complete the deployment.
 
-## Dataset Formats and Characteristics
+## Tampering Detection Task Dataset Introduction
 
-- IMDL-BenCo internally supports three different dataset formats, including two fundamental formats, `JsonDataset` and `ManiDataset`, which are used for reading individual datasets, and one special format, `BalanceDataset`, which manages multiple datasets simultaneously using a specific sampling strategy. Any dataset can be structured in one of three formats for subsequent model training.
-  - `ManiDataset` follows the same organization as the CASIA dataset, making it suitable for lightweight development scenarios where **real images are not required**.
-  - `JsonDataset` organizes the dataset using a JSON file, making it particularly suitable for scenarios that require real images.
-  - `BalancedDataset` manages a dictionary containing multiple `ManiDataset` or `JsonDataset` objects. In each epoch, it **randomly samples n images** (default: 1800) from all the included sub-datasets. As a result, the actual number of images used for training in one epoch is calculated as `number of datasets × n`. However, when the dataset is large enough, the diversity of images across multiple epochs remains high. Additionally, this approach helps prevent the trained model from **overfitting to larger datasets**. `BalancedDataset` is primarily designed for protocols related to [CAT-Net](https://openaccess.thecvf.com/content/WACV2021/html/Kwon_CAT-Net_Compression_Artifact_Tracing_Network_for_Detection_and_Localization_of_WACV_2021_paper.html) and [TruFor](https://openaccess.thecvf.com/content/CVPR2023/html/Guillaro_TruFor_Leveraging_All-Round_Clues_for_Trustworthy_Image_Forgery_Detection_and_CVPR_2023_paper.html). If you are not reproducing these protocols, you do not need to focus on this format.
-Additionally, during testing, it is necessary to input a large amount of datasets simultaneously, so an additional JSON format was defined for inputting large datasets. A sample is provided at the end of this section.
+- Currently, tampering detection generally includes two types of tasks:
+  - **Organized in Detection form**, perform image-level binary classification on a whole image to determine whether the image is tampered with.
+  - **Organized in Segmentation form**, generate a pixel-level binary classification mask for an image to segment the tampered area.
+- Therefore, generally speaking, a record in a tampering detection dataset includes the following content:
+  - A tampered image, image
+  - A corresponding binary mask of the tampered area
+  - A 0, 1 label representing whether the image has been tampered with.
+- Below are two typical pairs of tampered images and their corresponding masks:
+  - ![](/images/assets/demo.png)
+- Many papers only use "datasets that only contain tampered images". Recently, some papers have tried to introduce real images for training. Although this can reduce the false positive rate, it will cause a slight decrease in overall metrics (the model will tend not to predict, missing some positive points).
+## Dataset Format and Features
+- IMDL-BenCo internally implements three different dataset formats, corresponding to different dataset organization methods. Various tampering datasets can be organized into these formats for the framework to read.
+- The preset dataset formats of IMDL-BenCo include two basic `JsonDataset` and `ManiDataset`, used for reading individual datasets. There is also a `BalanceDataset`, which manages multiple datasets according to a special sampling strategy. Organizing the dataset in any of these three ways allows it to be read by IMDL-BenCo. Their specific introductions are as follows:
+  - `ManiDataset`, automatically reads all images in two folders (named `./Tp` and `./Gt`) under a path, serving as the image to be tested and the corresponding mask. Suitable for lightweight development and occasions where **real images do not need to be introduced**.
+  - `JsonDataset`, indexes the paths of required data through a Json file, suitable for occasions where **real images need to be introduced**.
+  - `BalancedDataset`, this dataset manages a dictionary that stores multiple `ManiDataset` or `JsonDataset` objects, and randomly samples n images from all the sub-datasets it contains in each Epoch (default only samples 1800 images). Therefore, the actual number of images participating in training in one Epoch is **the number of datasets × n**, but when the dataset is large enough, the richness of images over multiple Epochs can still be high. Moreover, it avoids the model trained after being too "overfitted" to large datasets. `BalancedDataset` is mainly designed for the protocols of [CAT-Net](https://openaccess.thecvf.com/content/WACV2021/html/Kwon_CAT-Net_Compression_Artifact_Tracing_Network_for_Detection_and_Localization_of_WACV_2021_paper.html) and [TruFor](https://openaccess.thecvf.com/content/CVPR2023/html/Guillaro_TruFor_Leveraging_All-Round_Clues_for_Trustworthy_Image_Forgery_Detection_and_CVPR_2023_paper.html). If you are not reproducing the protocol for this agreement, you do not need to pay attention.
 
-## Specific Format Definitions
+The above datasets can be used for direct training or testing. In addition, to improve efficiency in testing, multiple different datasets can be tested in sequence in one round of scripts, so an additional Json format is defined for inputting a large number of datasets, with an example at the end of this section.
 
-1. `JsonDataset`: Provide the path to a JSON file that organizes the images and corresponding masks in the following format:
-   ```json
+## Specific Definition Format
+1. `ManiDataset`, **pass in a folder path**, the folder contains two sub-folders `Tp` and `Gt`, benco automatically reads images from `Tp`, reads corresponding masks from `Gt`, and automatically pairs all image files in the two folders according to **dictionary order** to obtain a complete dataset. You can refer to the [IML-ViT sample folder](https://github.com/SunnyHaze/IML-ViT/tree/main/images/sample_iml_dataset).
+2. `JsonDataset`, **pass in a JSON file path**, organize images and corresponding masks with the following JSON format:
+   ```
    [
        [
          "/Dataset/CASIAv2/Tp/Tp_D_NRN_S_N_arc00013_sec00045_11700.jpg",
@@ -30,62 +43,59 @@ Additionally, during testing, it is necessary to input a large amount of dataset
        ......
    ]
    ```
-   Here, "Negative" represents a completely black mask, indicating a fully authentic image, so no path needs to be provided.
+   Where "Negative" indicates a completely black mask, i.e., a completely real image, so there is no need to input the path.
 
-2. `ManiDataset`: Provide the path to a folder containing two subfolders, `Tp` and `Gt`. BenCo will automatically read the images from `Tp` and the corresponding masks from `Gt`, pairing them based on the alphabetical order of file names as returned by `os.listdir()`. Typically, the default CASIA dataset is organized in this format. You can refer to the [sample folder in IML-ViT](https://github.com/SunnyHaze/IML-ViT/tree/main/images/sample_iml_dataset).
+3. `BalancedDataset`, pass in a JSON file path, used to organize and generate multiple sub-datasets, and sample from these sub-datasets when used. Specifically for organizing the protocols used in [CAT-Net](https://openaccess.thecvf.com/content/WACV2021/html/Kwon_CAT-Net_Compression_Artifact_Tracing_Network_for_Detection_and_Localization_of_WACV_2021_paper.html) and [TruFor](https://openaccess.thecvf.com/content/CVPR2023/html/Guillaro_TruFor_Leveraging_All-Round_Clues_for_Trustworthy_Image_Forgery_Detection_and_CVPR_2023_paper.html).
+   1. Specific protocol definition: Protocol-CAT uses 9 large datasets for training, but only randomly samples 1800 images from each dataset to form a 16200-image dataset for training in each Epoch.
+   2. Json organization form:
+    ```JSON
+    [
+       [
+           "ManiDataset",
+           "/mnt/data0/public_datasets/IML/CASIA2.0"
+       ],
+       [
+           "JsonDataset",
+           "/mnt/data0/public_datasets/IML/FantasticReality_v1/FantasticReality.json"
+       ],
+       [
+           "ManiDataset",
+           "/mnt/data0/public_datasets/IML/IMD_20_1024"
+       ],
+       [
+            "JsonDataset",
+            "/mnt/data0/public_datasets/IML/compRAISE/compRAISE_1024_list.json"
+      ],
+       [
+           "JsonDataset",
+           "/mnt/data0/public_datasets/IML/tampCOCO/sp_COCO_list.json"
+       ],
+       [
+           "JsonDataset",
+           "/mnt/data0/public_datasets/IML/tampCOCO/cm_COCO_list.json"
+       ],
+       [
+           "JsonDataset",
+           "/mnt/data0/public_datasets/IML/tampCOCO/bcm_COCO_list.json"
+       ],
+       [
+           "JsonDataset",
+           "/mnt/data0/public_datasets/IML/tampCOCO/bcmc_COCO_list.json"
+       ]
+    ]
+    ```
+    A two-dimensional array, each row represents a dataset, the first column represents the string of the dataset Class type used (read the corresponding dataset according to the organization method of `ManiDataset` or `JsonDataset`), and the second column is the path of the dataset that needs to be read for this type.
 
-3. `BalancedDataset`: Provide the path to a JSON file specifically used to organize the datasets for the [CAT-Net](https://openaccess.thecvf.com/content/WACV2021/html/Kwon_CAT-Net_Compression_Artifact_Tracing_Network_for_Detection_and_Localization_of_WACV_2021_paper.html) and [TruFor](https://openaccess.thecvf.com/content/CVPR2023/html/Guillaro_TruFor_Leveraging_All-Round_Clues_for_Trustworthy_Image_Forgery_Detection_and_CVPR_2023_paper.html) protocols.
-   1. Protocol definition: Protocol-CAT uses nine large datasets for training, but in each epoch, only 1,800 images are randomly sampled from each dataset to form a dataset of 16,200 images for training.
-   2. JSON format:
-      ```JSON
-      [
-         [
-             "ManiDataset",
-             "/mnt/data0/public_datasets/IML/CASIA2.0"
-         ],
-         [
-             "JsonDataset",
-             "/mnt/data0/public_datasets/IML/FantasticReality_v1/FantasticReality.json"
-         ],
-         [
-             "ManiDataset",
-             "/mnt/data0/public_datasets/IML/IMD_20_1024"
-         ],
-         [
-             "JsonDataset",
-             "/mnt/data0/public_datasets/IML/compRAISE/compRAISE_1024_list.json"
-         ],
-         [
-             "JsonDataset",
-             "/mnt/data0/public_datasets/IML/tampCOCO/sp_COCO_list.json"
-         ],
-         [
-             "JsonDataset",
-             "/mnt/data0/public_datasets/IML/tampCOCO/cm_COCO_list.json"
-         ],
-         [
-             "JsonDataset",
-             "/mnt/data0/public_datasets/IML/tampCOCO/bcm_COCO_list.json"
-         ],
-         [
-             "JsonDataset",
-             "/mnt/data0/public_datasets/IML/tampCOCO/bcmc_COCO_list.json"
-         ]
-      ]
-      ```
-      This two-dimensional array represents a list of datasets, where each row corresponds to a dataset. The first column specifies the dataset class type as a string, and the second column provides the path to that dataset.
+Organize the datasets needed according to the requirements, and then you can start considering reproducing the model or implementing your own model.
 
-After organizing the required datasets as needed, you can proceed to reproduce models or implement your own models.
+In addition to the format to be noted, to improve the speed of training and testing, it is also necessary to perform necessary preprocessing on the images.
 
+## Preprocessing for High-Resolution Images
+Some datasets have very high resolutions, such as the NIST16 and compRAISE datasets in the CAT-Protocol, which contain 4000x4000 images. These datasets, if directly read during training, will bring a very high I/O burden. Especially when used as training datasets.
 
-Except for the protocol, pre-processing is also needed to speed up the training.
+So we particularly recommend resizing the images to a smaller size in advance when using these datasets, such as reducing to a long side equal to 1024 while maintaining the aspect ratio. Otherwise, the training speed may be greatly slowed down, please refer to [IMDL-BenCo issue #40](https://github.com/scu-zjz/IMDLBenCo/issues/40).
 
-## Preprocessing High-Resolution Images
-Some datasets come with very high resolutions by default. For example, the NIST16 dataset and the compRAISE dataset in CAT-Protocol includes images with resolutions as high as 4000x4000. Directly reading these datasets during training can lead to an extremely high I/O load, especially when used as training data. 
-
-Therefore, we highly recommend resizing these images to a smaller size in advance, such as reducing the longer edge to 1024 while maintaining the aspect ratio. Otherwise, the training speed may be significantly slowed down. Please refer to [IMDL-BenCo issue #40](https://github.com/scu-zjz/IMDLBenCo/issues/40).
-
-We provide a multithreaded image resizing code here, which can efficiently convert all images in a directory to the desired resolution using a thread pool:
+We provide a Resize code based on a thread pool here, which can efficiently convert all images in a path to the desired resolution through multi-threading:
 ```python
 import os
 from PIL import Image
@@ -97,7 +107,7 @@ def process_image(filename, directory, output_directory, target_size):
             width, height = img.size
             print(f'Processing Image: {filename} | Resolution: {width}x{height}')
 
-            # Determine the scaling ratio for the longest side to be 1024
+            # Determine the scaling ratio with the long side as 1024
             if max(width, height) > target_size:
                 if width > height:
                     new_width = target_size
@@ -114,32 +124,32 @@ def process_image(filename, directory, output_directory, target_size):
                 img_resized.save(output_path)
                 print(f'Resized and saved {filename} to {output_directory} with resolution {new_width}x{new_height}')
             else:
-                # If no resizing is needed, directly copy the image to the target folder
+                # If the image does not need to be adjusted, directly copy it to the target folder
                 img.save(os.path.join(output_directory, filename))
                 print(f'Image {filename} already meets the target size and was saved without resizing.')
-            return 1  # Return a success count
+            return 1  # Return the count of successful processing
     except Exception as e:
         print(f"Cannot process {filename}: {e}")
-        return 0  # Return a failure count
+        return 0  # Return the count of failed processing
 
 def get_image_resolutions_and_resize(directory='.', output_directory='resized_images', target_size=1024):
-    # Create output directory if it doesn't exist
+    # Create the output folder, create if it does not exist
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
     # Get all image files
     image_files = [f for f in os.listdir(directory) if f.lower().endswith(('png', 'jpg', 'jpeg', 'bmp', 'gif', 'tiff'))]
     
-    # Process images using a thread pool
+    # Use a thread pool to process images
     total_processed = 0
     with ThreadPoolExecutor() as executor:
         futures = [executor.submit(process_image, filename, directory, output_directory, target_size) for filename in image_files]
         
-        # Wait for all threads to complete and accumulate the number of processed images
+        # Wait for all threads to complete and accumulate the number of processed
         for future in futures:
             total_processed += future.result()
 
-    # Output the total number of images processed
+    # Output the total number of images
     print(f"\nTotal number of images processed: {total_processed}")
 
 # Execute the function
@@ -150,12 +160,13 @@ get_image_resolutions_and_resize(
 )
 ```
 
+
 ## Test Dataset JSON
-Specifically, for testing purposes, since a large number of datasets need to be input simultaneously to complete the test, a dedicated `test_dataset.json` has been defined to fulfill this function.
+Specifically, for testing, since batch testing needs to be completed on multiple datasets, a `test_dataset.json` is defined to accomplish this function. Because it is the testing phase, only paths representing `ManiDataset` or `JsonDataset` can be passed as test sets; different from `BalancedDataset`, which can only be used for training.
 
-The keys represent the field names used for functionalities like Tensorboard, logging, and other visualization purposes, while the values correspond to the actual paths of the aforementioned datasets.
+The Key is the field name used for Tensorboard, log output, and other Visualize features, and the Value is the specific path of the above datasets.
 
-Example:
+An example of `test_datasets.json`, directly pass the path of this json to the training script as the test set (introduced later):
 
 ```JSON
 {
