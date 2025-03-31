@@ -2,7 +2,8 @@ import { defaultTheme } from '@vuepress/theme-default'
 import { defineUserConfig } from 'vuepress/cli'
 import { viteBundler } from '@vuepress/bundler-vite'
 import { searchPlugin } from '@vuepress/plugin-search'
-// import { markdownTabPlugin } from '@vuepress/plugin-markdown-tab'
+import { docsearchPlugin } from '@vuepress/plugin-docsearch'
+
 import {
   head,
   navbarEn,
@@ -129,6 +130,15 @@ export default defineUserConfig({
         hotKeys: ['s', '/'],
         // 排除标题中的某些词语
         // isSearchable: (page) => page.path !== '/exclude.html',
+    }),
+    docsearchPlugin({
+      // 配置项
+      apiKey : "9d2d7b0a01f010b60f525b7a4a74b841",
+      appId : "W3JD3JHPAP",
+      indexName: "scu-zjzio",
+      insights: true,
+      container: '#algolia-doc-search',
+      debug: false,
     }),
   ]
   // Redirection logic

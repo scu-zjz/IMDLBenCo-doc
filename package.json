@@ -12,6 +12,7 @@
   },
   "devDependencies": {
     "@vuepress/bundler-vite": "^2.0.0-rc.7",
+    "@vuepress/plugin-docsearch": "^2.0.0-rc.90",
     "@vuepress/plugin-markdown-tab": "^2.0.0-rc.90",
     "@vuepress/plugin-search": "^2.0.0-rc.37",
     "@vuepress/theme-default": "^2.0.0-rc.20",
