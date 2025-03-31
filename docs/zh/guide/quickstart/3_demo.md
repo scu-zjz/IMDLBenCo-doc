@@ -168,3 +168,368 @@ if __name__ == "__main__":
   - 务必按照此格式组织，才能正常融入后续指标运算、可视化等流程。 
 
 ## 从头到尾的保姆级教程
+我们以[ConvNeXt网络](https://arxiv.org/abs/2201.03545)为模型，CASIAv2作为训练集，CASIAv1作为测试集为例，从头到尾带您体验使用IMDL-BenCo设计，训练，测试一个您自己的新模型的流程。
+### 下载数据集
+本仓库提供了目前主流篡改检测数据集的索引目录，简介，以及勘误。请参考[篡改检测数据集索引](../../imdl_data_model_hub/data/IMDLdatasets.md)章节。
+
+:::important 提示
+目前很多篡改检测数据集都是纯手工标注收集，导致存在很多错误，所以必要的勘误是必须的。常见错误包括：
+1. image和mask分辨率不一致；
+2. 有多余图片没有对应mask；
+3. image和mask有显然的错位标注；
+
+更多勘误相关信息可以参考这个[IML-Dataset-Corrections仓库](https://github.com/SunnyHaze/IML-Dataset-Corrections)。
+:::
+
+- CASIAv2下载链接：
+  - 请参考[Sunnyhaze的仓库](https://github.com/SunnyHaze/CASIA2.0-Corrected-Groundtruth)的`Fixed groundtruth downloading`章节下载完整数据集。
+- CASIAv1下载链接：
+  - 请从[namtpham的仓库](https://github.com/namtpham/casia1groundtruth)Readme中的网盘链接下载原始数据集图片。
+  - 请clone该仓库以下载图片对应的mask
+    ```
+    git clone https://github.com/namtpham/casia1groundtruth
+    ```
+
+### 组织数据集到IMDL-BenCo可以读取的格式
+具体格式要求请参考[数据集准备章节](./0_dataprepare.md)。
+- 下载好的CASIAv2数据集已经按照`ManiDataset`的格式组织了，解压后即可。
+- 下载好的CASIAv1数据集还需要进一步处理。我们这里分别提供`JsonDataset`和`ManiDataset`两种方式。
+
+首先，对于该仓库提供的原始数据集`CASIA 1.0 dataset`解压后可以看到文件如下：
+```shell
+.
+├── Au.zip
+├── Authentic_list.txt
+├── Modified Tp.zip
+├── Modified_CopyMove_list.txt
+├── Modified_Splicing_list.txt
+├── Original Tp.zip
+├── Original_CopyMove_list.txt
+└── Original_Splicing_list.txt
+```
+
+因为最早CASIA官方有一些文件名谬误，该仓库对于这些命名错误进行了修改。实际上我们只需要解压修改后的`Modified Tp.zip`即可，得到：
+```shell
+└── Tp
+    ├── CM
+    └── Sp
+```
+其中`CM`下存放着`Copy-move`对应的篡改图像；而`SP`下存放着`Splicing`对应的篡改图像。理论上一共有921张图片。
+
+:::warning 重要！
+根据[勘误仓库](https://github.com/SunnyHaze/IML-Dataset-Corrections)，这里存在一张多余的图片没有对应的mask，即：`CASIA1.0/Modified Tp/Tp/Sp/Sp_D_NRN_A_cha0011_sec0011_0542.jpg`我们建议将这张图从这个数据集去除掉再进行后续处理。
+:::
+
+另外，对于存放对应mask的`CASIA 1.0 groundtruth`解压后得到：
+```shell
+.
+└── CASIA 1.0 groundtruth
+    ├── CM
+    ├── CopyMove_groundtruth_list.txt
+    ├── FileNameCorrection.xlsx
+    ├── Sp
+    └── Splicing_groundtruth_list.txt
+```
+同理，`CM`下存放着`Copy-move`对应的mask；而`SP`下存放着`Splicing`对应的mask。理论上应该有920张图片。**所以为了保证image和mask能一一对应，请务必去除掉篡改图像中上述多余的一张**。
+
+接下来我们展示通过两种方式组织CASIAv1为IMDL-BenCo可以读取的数据集。
+
+#### 以JsonDataset为例组织数据集
+通过在设置好的路径下执行如下Python脚本即可生成IMDL-BenCo可以读取的`JSON`文件：
+```python
+import os
+import json
+
+def collect_image_paths(root_dir):
+    """收集目录下所有图片文件的相对路径和绝对路径"""
+    image_exts = {'.jpg', '.jpeg', '.png', '.bmp', '.tif', '.tiff', '.webp'}
+    image_paths = []
+    pwd = os.getcwd()
+    for dirpath, _, filenames in os.walk(root_dir):
+        for filename in filenames:
+            file_ext = os.path.splitext(filename)[1].lower()
+            if file_ext in image_exts:
+                abs_path = os.path.normpath(os.path.join(dirpath, filename))
+                image_paths.append(os.path.join(pwd, abs_path))
+    return image_paths
+
+def generate_pairs(image_root, mask_root, output_json):
+    # 收集图片路径
+    image_dict = collect_image_paths(image_root)
+    print("发现image数量:", len(image_dict))
+    mask_dict = collect_image_paths(mask_root)
+    print("发现的mask数量:", len(mask_dict))
+    assert len(image_dict) == len(mask_dict), "图片数量为{}和掩码数量{}不匹配！".format(len(image_dict), len(mask_dict))
+    # 生成配对列表
+    pairs = [
+        list(pairs)
+        for pairs in zip(sorted(image_dict), sorted(mask_dict))
+    ]
+    print(pairs)
+
+    # 保存为JSON文件
+    with open(output_json, 'w') as f:
+        json.dump(pairs, f, indent=2)
+
+    print(f"成功生成 {len(pairs)} 对路径，结果已保存至 {output_json}")
+    return pairs
+
+if __name__ == "__main__":
+    # 配置路径（根据实际情况修改）
+    IMAGE_ROOT = "Tp"
+    MASK_ROOT = "CASIA 1.0 groundtruth"
+    OUTPUT_JSON = "CASIAv1.json"
+
+    # 执行生成
+    result_pairs = generate_pairs(IMAGE_ROOT, MASK_ROOT, OUTPUT_JSON)
+
+    # 打印后5对示例以验证是否真的对齐了
+    print("\n后五对示例配对：")
+    for pair in result_pairs[-5:]:
+        print(f"Image: {pair[0]}")
+        print(f"Mask:  {pair[1]}\n")
+```
+以我为例，生成了这样的`json`文件：
+
+```json
+[
+  [
+    "/mnt/data0/xiaochen/workspace/IMDLBenCo_pure/guide/Tp/CM/Sp_S_CND_A_pla0016_pla0016_0196.jpg",
+    "/mnt/data0/xiaochen/workspace/IMDLBenCo_pure/guide/CASIA 1.0 groundtruth/CM/Sp_S_CND_A_pla0016_pla0016_0196_gt.png"
+  ],
+   ......
+]
+```
+
+后续通过将这个json文件的绝对路径作为测试集参数写入shell即可，比如：
+```shell
+/mnt/data0/xiaochen/workspace/IMDLBenCo_pure/guide/CASIAv1.json
+```
+
+特别的，如果你后续自己构建的数据集有真图，则自行写脚本构建JSON的时候，需要向真图的`mask`的路径写入`Negative`这个字符串。这样`Benco`会将这张图看做真图，对应纯黑的mask。比如加入上面这张图想看做真图使用的话，json应该这样组织：
+
+```json
+[
+  [
+    "/mnt/data0/xiaochen/workspace/IMDLBenCo_pure/guide/Tp/CM/Sp_S_CND_A_pla0016_pla0016_0196.jpg",
+    "Negative"
+  ],
+   ......
+]
+```
+
+#### 以ManiDataset为例组织数据集
+十分简单，找一个干净的存放数据集的路径创建一个名为`CASIAv1`的文件夹，然后分别按照如下名字新建两个子文件夹：
+```shell
+└── CASIAv1
+    ├── Tp
+    └── Gt
+```
+然后将920张篡改图像拷贝到`Tp`路径下，将920张mask拷贝到`Gt`路径下即可。后续通过将这个文件夹的路径作为测试集参数写入shell即可，比如：
+```shell
+/mnt/data0/xiaochen/workspace/IMDLBenCo_pure/guide/CASIAv1
+```
+
+### 在benco init下调整设计自己的模型。
+首先，我们需要执行`benco init`生成所需的所有文件和脚本。在本章前半部分已经对生成的文件做了简要介绍。
+
+自定义自己的模型，要修改`mymodel.py`，我们先给出修改后的代码，然后对重要的部分加以介绍。
+
+```python
+from IMDLBenCo.registry import MODELS
+import torch.nn as nn
+import torch
+import torch.nn.functional as F
+import timm
+
+class ConvNeXtDecoder(nn.Module):
+    """适配ConvNeXt的特征解码器"""
+    def __init__(self, encoder_channels=[96, 192, 384, 768], decoder_channels=[256, 128, 64, 32]):
+        super().__init__()
+        # 使用转置卷积逐步上采样
+        self.decoder = nn.Sequential(
+            nn.ConvTranspose2d(encoder_channels[-1], decoder_channels[0], kernel_size=4, stride=4),  # 16x16 -> 64x64
+            nn.GELU(),
+            
+            nn.ConvTranspose2d(decoder_channels[0], decoder_channels[1], kernel_size=4, stride=4),  # 64x64 -> 256x256
+            nn.GELU(),
+            
+            nn.Conv2d(decoder_channels[1], decoder_channels[2], kernel_size=3, padding=1),
+            nn.GELU(),
+            
+            nn.Conv2d(decoder_channels[2], decoder_channels[3], kernel_size=3, padding=1),
+            nn.GELU(),
+            
+            nn.Conv2d(decoder_channels[3], 1, kernel_size=1)
+        )
+
+    def forward(self, x):
+        return self.decoder(x)
+
+@MODELS.register_module()
+class MyConvNeXt(nn.Module):
+    def __init__(self) -> None:
+        super().__init__()
+
+        # 初始化ConvNeXt-Tiny骨干网络
+        self.backbone = timm.create_model(
+            "convnext_tiny",
+            pretrained=True,
+            features_only=True,
+            out_indices=[3],  # 取最后一个特征图 (1/32下采样)
+        )
+
+        # 分割解码器
+        self.seg_decoder = ConvNeXtDecoder()
+
+        # 分类头
+        self.cls_head = nn.Sequential(
+            nn.AdaptiveAvgPool2d(1),
+            nn.Flatten(),
+            nn.Linear(768, 1)  # ConvNeXt-Tiny最后通道数是768
+        )
+
+        # 损失函数
+        self.seg_loss = nn.BCEWithLogitsLoss()
+        self.cls_loss = nn.BCEWithLogitsLoss()
+
+    def forward(self, image, mask, label, *args, **kwargs):
+        # 特征提取
+        features = self.backbone(image)[0]  # 获取最后一个特征图 [B, 768, H/32, W/32]
+
+        # 分割预测
+        seg_pred = self.seg_decoder(features)
+        seg_pred = F.interpolate(seg_pred, size=mask.shape[2:], mode='bilinear', align_corners=False)
+
+        # 分类预测
+        cls_pred = self.cls_head(features).squeeze(-1)
+
+        # 计算损失
+        seg_loss = self.seg_loss(seg_pred, mask)
+        cls_loss = self.cls_loss(cls_pred, label.float())
+        combined_loss = seg_loss + cls_loss
+
+        # 构建输出字典
+        output_dict = {
+            "backward_loss": combined_loss,
+            "pred_mask": torch.sigmoid(seg_pred),
+            "pred_label": torch.sigmoid(cls_pred),
+
+            "visual_loss": {
+                "total_loss": combined_loss,
+                "seg_loss": seg_loss,
+                "cls_loss": cls_loss
+            },
+
+            "visual_image": {
+                "pred_mask": seg_pred,
+            }
+        }
+        return output_dict
+
+if __name__ == "__main__":
+    # 测试代码
+    model = MyConvNeXt()
+    x = torch.randn(2, 3, 512, 512)
+    mask = torch.randn(2, 1, 512, 512)
+    label = torch.randint(0, 2, (2,)).float()  # 注意标签维度调整为[batch_size]
+    output = model(x, mask, label)
+    print(output["pred_mask"].shape)  # torch.Size([2, 1, 512, 512])
+    print(output["pred_label"].shape) # torch.Size([2])
+```
+
+首先我们重命名了模型的类名为`class MyConvNeXt(nn.Module)`，只有完整模型的入口需要添加`@MODELS.register_module()`装饰器完成全局注册。前面的子模块`class ConvNeXtDecoder(nn.Module):`因为不需要被IMDL-BenCo直接调用，所以无需注册，也无需保持特别接口。
+
+可以注意到，损失函数被定义在了`__init__()`函数内部，并且在`forward()`函数中计算了损失。
+
+最后输出的字典，按照接口格式传回了：
+1. `backward_loss`，损失函数；
+2. `pred_mask`，分割头的pixel-level的预测结果，是0~1的概率图，会自动用于计算pixel-level的所有指标，比如`pixel-level F1`；
+3. `pred_label`，分类头的image-level的预测结果，是0~1的概率值，会自动用于image-level的所有指标，比如`image-level AUC`；
+4. `visual_loss`，用于可视化的标量损失函数字典，按照每个Epoch数值变化给每个标量绘制折线图；
+5. `visual_image`，用于观察预测mask的预测tensor字典，通过tensorboard展示图片的API逐字段展示字典中所有包含的tensor。
+
+:::important 重要
+这个字典是IMDL-BenCo自动化完成计算和可视化的重要接口，请务必掌握。
+:::
+
+### 修改其他脚本
+首先，因为修改了`mymodel.py`的一些信息，首先需要修改对应文件的接口。主要包含如下地方：
+- `train.py`, `test.py`和`test_robust.py`三个文件的开头关于模型的`import`修改为对应的模型名
+  - 原来是`from mymodel import MyModel`, 这里修改为新的模型名`from mymodel import MyConvNeXt`
+  - 当然，如果你修改了`mymodel.py`的文件名也是可以的，保证对应的import一致即可。
+  - 如果不import，则后续训练时IMDL-BenCo会无法找到对应的模型。
+
+**********
+
+- `train_mymodel.sh`这个脚本是启动训练的shell脚本，肯定需要修改。
+  - `--model`字段改为`MyConvNeXt`，模型会自动根据该字符串，从已经注册过的类匹配到对应模型。
+  - 因为这个模型的`__init__()`函数没有形参，所以这里作为样例展示的两个多余的参数`--MyModel_Customized_param`和`--pre_trained_weights`这两行直接删去即可。这个技术的文档在[通过shell传入nn.module的超参数](1_model_zoo.md#通过shell传入nn-module的超参数-语法糖)章节。
+  - 修改`--data_path`字段为准备好的训练集路径。
+  - 修改`--test_data_path`字段为之前准备好的测试集路径
+  - 修改其他的训练超参数以匹配你的设备需求，运算效率等等。
+以下是一个修改好的`train_mymodel.sh`的样例。
+```shell
+base_dir="./output_dir"
+mkdir -p ${base_dir}
+
+CUDA_VISIBLE_DEVICES=0,1 \
+torchrun  \
+    --standalone    \
+    --nnodes=1     \
+    --nproc_per_node=2 \
+./train.py \
+    --model MyConvNeXt \
+    --world_size 1 \
+    --batch_size 32 \
+    --test_batch_size 32 \
+    --num_workers 8 \
+    --data_path /mnt/data0/public_datasets/IML/CASIA2.0 \
+    --epochs 200 \
+    --lr 1e-4 \
+    --image_size 512 \
+    --if_resizing \
+    --min_lr 5e-7 \
+    --weight_decay 0.05 \
+    --edge_mask_width 7 \
+    --test_data_path "/mnt/data0/public_datasets/IML/CASIA1.0" \
+    --warmup_epochs 2 \
+    --output_dir ${base_dir}/ \
+    --log_dir ${base_dir}/ \
+    --accum_iter 8 \
+    --seed 42 \
+    --test_period 4 \
+2> ${base_dir}/error.log 1>${base_dir}/logs.log
+```
+这里我有两张显卡，所以设置`CUDA_VISIBLE_DEVICES=0,1`和`--nproc_per_node=2`，你可以修改为你设备可以支持的数量和对应显卡编号。
+
+### 开展训练
+
+然后在该工作目录下执行如下指令即可开始训练：
+```shell
+sh train_mymodel.sh
+```
+
+按照如上的设置，这个样例占用了两张显卡，每张卡占用`4104M`的显存。
+
+这里推荐一个看显卡占用的工具`gpustat`，通过`pip install gpustat`后在命令行执行`gpustat`即可方便查看显卡占用以及对应用户。比如这里可以看到是我写这个教程时占用的前两张卡：
+```shell
+psdz           Mon Mar 31 22:51:55 2025  570.124.06
+[0] NVIDIA A40 | 44°C, 100 % | 18310 / 46068 MB | psdz(17442M) gdm(4M)
+[1] NVIDIA A40 | 45°C,  35 % | 18310 / 46068 MB | psdz(17442M) gdm(4M)
+[2] NVIDIA A40 | 65°C, 100 % | 40153 / 46068 MB | xuekang(38666M) xuekang(482M) xuekang(482M) xuekang(482M) gdm(4M)
+[3] NVIDIA A40 | 76°C, 100 % | 38602 / 46068 MB | xuekang(38452M) gdm(108M) gdm(14M)
+[4] NVIDIA A40 | 59°C, 100 % | 38466 / 46068 MB | xuekang(38444M) gdm(4M)
+[5] NVIDIA A40 | 63°C, 100 % | 38478 / 46068 MB | xuekang(38456M) gdm(4M)
+```
+
+此时可以通过执行下列指令调出`tensorboard`来监视训练过程:
+```shell
+tensorboard --logdir ./  
+```
+
+打开它给出的对应网址，如果你用的是服务器，vscode或者pycharm都会帮你把这个端口转发到你本地计算机的对应端口。按住ctrl单击对应链接即可。我这里是访问
+```shell
+http://localhost:6006/
+```
+这样可以观察到loss曲线，训练过程中在测试集的指标，以及可视化的训练图片等等。测试集的指标按照

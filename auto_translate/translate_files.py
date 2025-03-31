@@ -67,17 +67,38 @@ def translate_text_with_retry(content, api_key):
     ]
     token_count = estimate_token_count(api_key, model="moonshot-v1-8k", messages=messages)
     print(f"Estimated Token count: {token_count}")
+    select_model = "moonshot-v1-8k" if token_count <= 8192 / 2 else "moonshot-v1-32k" if token_count <= 128000 / 2 else "moonshot-v1-128k"
+    MAX_TOKEN_LEN = 8192 if select_model == "moonshot-v1-8k" else 32768 if select_model == "moonshot-v1-32k" else 128000
+    print(f"Selected Model: {select_model}")
+    print(f"Max Token Length: {MAX_TOKEN_LEN}")
 
-    if token_count > 8192:
-        raise ValueError(f"Token number in Content is {token_count}, exceeds maximum token limit of 8192.")
-    max_tokens = 8192 - token_count - 200  # 留出200个token用于响应
+    max_tokens = MAX_TOKEN_LEN - token_count - 200  # 留出200个token用于响应
+    print(max_tokens)
     response = client.chat.completions.create(
-        model="moonshot-v1-8k",
+        model=select_model,
             messages=messages,
             temperature=0.3,
             max_tokens=max_tokens
         )
     print("Finish Reason:", response.choices[0].finish_reason)
+    if response.choices[0].finish_reason == "length":  # <-- 当内容被截断时，finish_reason 的值为 length
+        # 计算token count，选择合适的模型进行续写
+        prefix = response.choices[0].message.content
+        print(prefix, end="")  # <-- 在这里，你将看到被截断的部分输出内容
+        response = client.chat.completions.create(
+            model="moonshot-v1-128k",
+            messages=[
+                {"role": "system", "content": TRANSLATION_PROMPT},
+                {"role": "user", "content": content},
+                {"role": "assistant", "content": prefix, "partial": True},
+            ],
+            temperature=0.3,
+            max_tokens=128000,  # <-- 注意这里，我们将 max_tokens 的值设置为一个较大的值，以确保 Kimi 大模型能完整输出内容
+        )
+        print(response.choices[0].message.content)  # <-- 在这里，你将看到 Kimi 大模型顺着之前已经输出的内容，继续将输出内容补全完整
+
+
+
     if response.choices[0].finish_reason != "stop":
         raise ValueError(f"Unexpected finish reason: {response.choices[0].finish_reason}")
 

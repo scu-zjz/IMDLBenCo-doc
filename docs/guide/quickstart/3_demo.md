@@ -166,4 +166,370 @@ if __name__ == "__main__":
     |visual_image|Pass in the images, feature maps, various masks that need to be visualized. You can name any number, any name of keys and pass in the corresponding Tensors, which will be automatically visualized according to the Key name later|Dict()|
   - Be sure to organize according to this format to integrate normally into subsequent metric calculations, visualization, etc.
 
-# A Comprehensive Tutorial from Start to Finish
+## Step-by-Step Comprehensive Tutorial
+We will use the [ConvNeXt](https://arxiv.org/abs/2201.03545) as a model, CASIAv2 as the training set, and CASIAv1 as the test set to guide you through the process of designing, training, and testing your own new model with IMDL-BenCo from start to finish.
+
+### Downloading Datasets
+This repository provides an index directory, introduction, and errata for the current mainstream tampering detection datasets. Please refer to the [Tampering Detection Dataset Index](../../imdl_data_model_hub/data/IMDLdatasets.md) section.
+
+:::important Note
+Many tampering detection datasets are manually annotated and collected, which leads to many errors, so necessary corrections are essential. Common errors include:
+1. Inconsistent image and mask resolutions;
+2. Extra images without corresponding masks;
+3. Obvious misalignment between images and masks;
+
+More information on corrections can be found in this [IML-Dataset-Corrections repository](https://github.com/SunnyHaze/IML-Dataset-Corrections).
+:::
+
+- CASIAv2 download link:
+  - Please refer to the `Fixed groundtruth downloading` section in [Sunnyhaze's repository](https://github.com/SunnyHaze/CASIA2.0-Corrected-Groundtruth) to download the complete dataset.
+- CASIAv1 download link:
+  - Download the original dataset images from the cloud storage link in the Readme of [namtpham's repository](https://github.com/namtpham/casia1groundtruth).
+  - Please clone this repository to download the corresponding masks for the images.
+    ```
+    git clone https://github.com/namtpham/casia1groundtruth
+    ```
+
+### Organizing Datasets into a Format Readable by IMDL-BenCo
+Please refer to the [Dataset Preparation Section](./0_dataprepare.md) for specific format requirements.
+- The downloaded CASIAv2 dataset is already organized in the `ManiDataset` format and can be used directly after extraction.
+- The downloaded CASIAv1 dataset requires further processing. We provide two methods here, `JsonDataset` and `ManiDataset`.
+
+First, after extracting the original dataset `CASIA 1.0 dataset` provided by this repository, you can see the following files:
+```shell
+.
+├── Au.zip
+├── Authentic_list.txt
+├── Modified Tp.zip
+├── Modified_CopyMove_list.txt
+├── Modified_Splicing_list.txt
+├── Original Tp.zip
+├── Original_CopyMove_list.txt
+└── Original_Splicing_list.txt
+```
+
+Due to some filename errors from the official CASIA, this repository has corrected these naming errors. In fact, we only need to extract the modified `Modified Tp.zip`, which results in:
+```shell
+└── Tp
+    ├── CM
+    └── Sp
+```
+Where `CM` contains the tampered images corresponding to `Copy-move`; and `SP` contains the tampered images corresponding to `Splicing`. There should be a total of 921 images in theory.
+
+:::warning Important!
+According to the [errata repository](https://github.com/SunnyHaze/IML-Dataset-Corrections), there is an extra image without a corresponding mask, namely: `CASIA1.0/Modified Tp/Tp/Sp/Sp_D_NRN_A_cha0011_sec0011_0542.jpg`. We recommend removing this image from the dataset before proceeding with further processing.
+:::
+
+Additionally, after extracting the `CASIA 1.0 groundtruth`, you get:
+```shell
+.
+└── CASIA 1.0 groundtruth
+    ├── CM
+    ├── CopyMove_groundtruth_list.txt
+    ├── FileNameCorrection.xlsx
+    ├── Sp
+    └── Splicing_groundtruth_list.txt
+```
+Similarly, `CM` contains the masks corresponding to `Copy-move`; and `SP` contains the masks corresponding to `Splicing`. There should be 920 images in theory. **To ensure one-to-one correspondence between images and masks, please remove the extra image from the tampered images as mentioned above**.
+
+Next, we demonstrate how to organize CASIAv1 into a dataset readable by IMDL-BenCo in two ways.
+
+#### Organizing Dataset with JsonDataset
+You can generate a `JSON` file readable by IMDL-BenCo by executing the following Python script in the set path:
+```python
+import os
+import json
+
+def collect_image_paths(root_dir):
+    """Collect the relative and absolute paths of all image files in the directory"""
+    image_exts = {'.jpg', '.jpeg', '.png', '.bmp', '.tif', '.tiff', '.webp'}
+    image_paths = []
+    pwd = os.getcwd()
+    for dirpath, _, filenames in os.walk(root_dir):
+        for filename in filenames:
+            file_ext = os.path.splitext(filename)[1].lower()
+            if file_ext in image_exts:
+                abs_path = os.path.normpath(os.path.join(dirpath, filename))
+                image_paths.append(os.path.join(pwd, abs_path))
+    return image_paths
+
+def generate_pairs(image_root, mask_root, output_json):
+    # Collect image paths
+    image_dict = collect_image_paths(image_root)
+    print("Number of images found:", len(image_dict))
+    mask_dict = collect_image_paths(mask_root)
+    print("Number of masks found:", len(mask_dict))
+    assert len(image_dict) == len(mask_dict), "The number of images {} and the number of masks {} do not match!".format(len(image_dict), len(mask_dict))
+    # Generate pairing list
+    pairs = [
+        list(pairs)
+        for pairs in zip(sorted(image_dict), sorted(mask_dict))
+    ]
+    print(pairs)
+
+    # Save as JSON file
+    with open(output_json, 'w') as f:
+        json.dump(pairs, f, indent=2)
+
+    print(f"Successfully generated {len(pairs)} pairs of paths, results saved to {output_json}")
+    return pairs
+
+if __name__ == "__main__":
+    # Configure paths (modify according to actual situation)
+    IMAGE_ROOT = "Tp"
+    MASK_ROOT = "CASIA 1.0 groundtruth"
+    OUTPUT_JSON = "CASIAv1.json"
+
+    # Execute generation
+    result_pairs = generate_pairs(IMAGE_ROOT, MASK_ROOT, OUTPUT_JSON)
+
+    # Print the last 5 pairs as an example to verify alignment
+    print("\nLast five example pairs:")
+    for pair in result_pairs[-5:]:
+        print(f"Image: {pair[0]}")
+        print(f"Mask:  {pair[1]}\n")
+```
+For example, I generated a `json` file like this:
+
+```json
+[
+  [
+    "/mnt/data0/xiaochen/workspace/IMDLBenCo_pure/guide/Tp/CM/Sp_S_CND_A_pla0016_pla0016_0196.jpg",
+    "/mnt/data0/xiaochen/workspace/IMDLBenCo_pure/guide/CASIA 1.0 groundtruth/CM/Sp_S_CND_A_pla0016_pla0016_0196_gt.png"
+  ],
+   ......
+]
+```
+
+Subsequently, you can write the absolute path of this json file as the test set parameter in the shell, for example:
+```shell
+/mnt/data0/xiaochen/workspace/IMDLBenCo_pure/guide/CASIAv1.json
+```
+
+Note that, if you build your own dataset with real images later, you need to write the path of the `mask` for real images as the string `Negative` when building the JSON script. This way, `Benco` will treat this image as a real image with a pure black mask. For example, if you want to use the above image as a real image, the json should be organized like this:
+
+```json
+[
+  [
+    "/mnt/data0/xiaochen/workspace/IMDLBenCo_pure/guide/Tp/CM/Sp_S_CND_A_pla0016_pla0016_0196.jpg",
+    "Negative"
+  ],
+   ......
+]
+```
+
+#### Organizing Dataset with ManiDataset
+Very simple, find a clean path to store the dataset and create a folder named `CASIAv1`, then create two subfolders with the following names:
+```shell
+└── CASIAv1
+    ├── Tp
+    └── Gt
+```
+Then copy the 920 tampered images to the `Tp` path and copy the 920 masks to the `Gt` path. Subsequently, you can write the path of this folder as the test set parameter in the shell, for example:
+```shell
+/mnt/data0/xiaochen/workspace/IMDLBenCo_pure/guide/CASIAv1
+```
+
+### Adjusting the Design of Your Own Model under benco init
+First, we need to execute `benco init` to generate all the required files and scripts. A brief introduction to the generated files has been given in the first half of this chapter.
+
+To customize your own model, you need to modify `mymodel.py`. We will first provide the modified code and then introduce the important parts.
+
+```python
+from IMDLBenCo.registry import MODELS
+import torch.nn as nn
+import torch
+import torch.nn.functional as F
+import timm
+
+class ConvNeXtDecoder(nn.Module):
+    """Adapted ConvNeXt feature decoder"""
+    def __init__(self, encoder_channels=[96, 192, 384, 768], decoder_channels=[256, 128, 64, 32]):
+        super().__init__()
+        # Use transposed convolution for upsampling step by step
+        self.decoder = nn.Sequential(
+            nn.ConvTranspose2d(encoder_channels[-1], decoder_channels[0], kernel_size=4, stride=4),  # 16x16 -> 64x64
+            nn.GELU(),
+            
+            nn.ConvTranspose2d(decoder_channels[0], decoder_channels[1], kernel_size=4, stride=4),  # 64x64 -> 256x256
+            nn.GELU(),
+            
+            nn.Conv2d(decoder_channels[1], decoder_channels[2], kernel_size=3, padding=1),
+            nn.GELU(),
+            
+            nn.Conv2d(decoder_channels[2], decoder_channels[3], kernel_size=3, padding=1),
+            nn.GELU(),
+            
+            nn.Conv2d(decoder_channels[3], 1, kernel_size=1)
+        )
+
+    def forward(self, x):
+        return self.decoder(x)
+
+@MODELS.register_module()
+class MyConvNeXt(nn.Module):
+    def __init__(self) -> None:
+        super().__init__()
+
+        # Initialize ConvNeXt-Tiny backbone network
+        self.backbone = timm.create_model(
+            "convnext_tiny",
+            pretrained=True,
+            features_only=True,
+            out_indices=[3],  # Take the last feature map (1/32 downsampling)
+        )
+
+        # Segmentation decoder
+        self.seg_decoder = ConvNeXtDecoder()
+
+        # Classification head
+        self.cls_head = nn.Sequential(
+            nn.AdaptiveAvgPool2d(1),
+            nn.Flatten(),
+            nn.Linear(768, 1)  # ConvNeXt-Tiny's last channel count is 768
+        )
+
+        # Loss functions
+        self.seg_loss = nn.BCEWithLogitsLoss()
+        self.cls_loss = nn.BCEWithLogitsLoss()
+
+    def forward(self, image, mask, label, *args, **kwargs):
+        # Feature extraction
+        features = self.backbone(image)[0]  # Get the last feature map [B, 768, H/32, W/32]
+
+        # Segmentation prediction
+        seg_pred = self.seg_decoder(features)
+        seg_pred = F.interpolate(seg_pred, size=mask.shape[2:], mode='bilinear', align_corners=False)
+
+        # Classification prediction
+        cls_pred = self.cls_head(features).squeeze(-1)
+
+        # Calculate losses
+        seg_loss = self.seg_loss(seg_pred, mask)
+        cls_loss = self.cls_loss(cls_pred, label.float())
+        combined_loss = seg_loss + cls_loss
+
+        # Build output dictionary
+        output_dict = {
+            "backward_loss": combined_loss,
+            "pred_mask": torch.sigmoid(seg_pred),
+            "pred_label": torch.sigmoid(cls_pred),
+
+            "visual_loss": {
+                "total_loss": combined_loss,
+                "seg_loss": seg_loss,
+                "cls_loss": cls_loss
+            },
+
+            "visual_image": {
+                "pred_mask": seg_pred,
+            }
+        }
+        return output_dict
+
+if __name__ == "__main__":
+    # Test code
+    model = MyConvNeXt()
+    x = torch.randn(2, 3, 512, 512)
+    mask = torch.randn(2, 1, 512, 512)
+    label = torch.randint(0, 2, (2,)).float()  # Note that the label dimension is adjusted to [batch_size]
+    output = model(x, mask, label)
+    print(output["pred_mask"].shape)  # torch.Size([2, 1, 512, 512])
+    print(output["pred_label"].shape) # torch.Size([2])
+```
+
+We first renamed the model class to `class MyConvNeXt(nn.Module)`. Only the entry of the complete model needs to add the `@MODELS.register_module()` decorator to complete global registration. The previous submodule `class ConvNeXtDecoder(nn.Module):` does not need to be called directly by IMDL-BenCo, so there is no need to register it or maintain a special interface.
+
+It can be noted that the loss functions are defined inside the `__init__()` function and calculated in the `forward()` function.
+
+The final output dictionary returns the following according to the interface format:
+1. `backward_loss`, the loss function;
+2. `pred_mask`, the pixel-level prediction result of the segmentation head, which is a 0~1 probability map and will be automatically used to calculate all pixel-level metrics, such as `pixel-level F1`;
+3. `pred_label`, the image-level prediction result of the classification head, which is a 0~1 probability value and will be automatically used for all image-level metrics, such as `image-level AUC`;
+4. `visual_loss`, a dictionary of scalar loss functions for visualization, plotting a line chart for each scalar according to the numerical changes per Epoch;
+5. `visual_image`, a dictionary of prediction tensors for observing the predicted mask, displaying all tensors in the dictionary through the tensorboard API.
+
+:::important Important
+This dictionary is an important interface for IMDL-BenCo to automatically complete calculations and visualizations. Please be sure to master it.
+:::
+
+### Modify Other Scripts
+First, since some information in `mymodel.py` has been modified, you need to modify the corresponding file interfaces. Mainly includes the following places:
+- The beginning of `train.py`, `test.py`, and `test_robust.py` regarding the model's `import` is modified to the corresponding model name
+  - Originally `from mymodel import MyModel`, here it is modified to the new model name `from mymodel import MyConvNeXt`
+  - Of course, if you change the file name of `mymodel.py`, it is also possible, as long as the corresponding import is consistent.
+  - If not imported, IMDL-BenCo will not be able to find the corresponding model during subsequent training.
+
+**********
+
+- The script `train_mymodel.sh` is the shell script to start training and definitely needs to be modified.
+  - Change the `--model` field to `MyConvNeXt`, the model will automatically match the corresponding model based on this string from the registered classes.
+  - Since this model's `__init__()` function has no parameters, the two redundant parameters `--MyModel_Customized_param` and `--pre_trained_weights` shown in this example can be directly deleted. The documentation for this technique is in the [Passing nn.Module Hyperparameters through Shell](1_model_zoo.md#Passing-nn-module-hyperparameters-through-shell-syntax-sugar) section.
+  - Modify the `--data_path` field to the prepared training set path.
+  - Modify the `--test_data_path` field to the previously prepared test set path.
+  - Modify other training hyperparameters to match your device requirements, computational efficiency, etc.
+Here is an example of a modified `train_mymodel.sh`.
+```shell
+base_dir="./output_dir"
+mkdir -p ${base_dir}
+
+CUDA_VISIBLE_DEVICES=0,1 \
+torchrun  \
+    --standalone    \
+    --nnodes=1     \
+    --nproc_per_node=2 \
+./train.py \
+    --model MyConvNeXt \
+    --world_size 1 \
+    --batch_size 32 \
+    --test_batch_size 32 \
+    --num_workers 8 \
+    --data_path /mnt/data0/public_datasets/IML/CASIA2.0 \
+    --epochs 200 \
+    --lr 1e-4 \
+    --image_size 512 \
+    --if_resizing \
+    --min_lr 5e-7 \
+    --weight_decay 0.05 \
+    --edge_mask_width 7 \
+    --test_data_path "/mnt/data0/public_datasets/IML/CASIA1.0" \
+    --warmup_epochs 2 \
+    --output_dir ${base_dir}/ \
+    --log_dir ${base_dir}/ \
+    --accum_iter 8 \
+    --seed 42 \
+    --test_period 4 \
+2> ${base_dir}/error.log 1>${base_dir}/logs.log
+```
+Here I have two graphics cards, so I set `CUDA_VISIBLE_DEVICES=0,1` and `--nproc_per_node=2`, you can modify it to the number supported by your device and the corresponding graphics card number.
+
+### Conduct Training
+
+Then, execute the following command in the working directory to start training:
+```shell
+sh train_mymodel.sh
+```
+
+According to the above settings, this example occupies two graphics cards, with each card occupying `4104M` of memory.
+
+Here is a recommended tool to check graphics card usage, `gpustat`. After installing `pip install gpustat` and executing `gpustat` in the command line, you can easily view the graphics card usage and corresponding users. For example, here you can see the first two cards I used while writing this tutorial:
+```shell
+psdz           Mon Mar 31 22:51:55 2025  570.124.06
+[0] NVIDIA A40 | 44°C, 100 % | 18310 / 46068 MB | psdz(17442M) gdm(4M)
+[1] NVIDIA A40 | 45°C,  35 % | 18310 / 46068 MB | psdz(17442M) gdm(4M)
+[2] NVIDIA A40 | 65°C, 100 % | 40153 / 46068 MB | xuekang(38666M) xuekang(482M) xuekang(482M) xuekang(482M) gdm(4M)
+[3] NVIDIA A40 | 76°C, 100 % | 38602 / 46068 MB | xuekang(38452M) gdm(108M) gdm(14M)
+[4] NVIDIA A40 | 59°C, 100 % | 38466 / 46068 MB | xuekang(38444M) gdm(4M)
+[5] NVIDIA A40 | 63°C, 100 % | 38478 / 46068 MB | xuekang(38456M) gdm(4M)
+```
+
+At this point, you can execute the following command to bring up `tensorboard` to monitor the training process:
+```shell
+tensorboard --logdir ./  
+```
+
+Open the corresponding URL it provides. If you are using a server, vscode or pycharm will help you forward this port to the corresponding port on your local computer. Hold down the ctrl key and click on the corresponding link. I am accessing here:
+```shell
+http://localhost:6006/
+```
+This way, you can observe the loss curve, metrics on the test set during training, as well as visualized training images, etc. The metrics on the test set are updated according to
