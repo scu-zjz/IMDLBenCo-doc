@@ -6,6 +6,7 @@ import { docsearchPlugin } from '@vuepress/plugin-docsearch'
 import { commentPlugin } from '@vuepress/plugin-comment'
 import { seoPlugin } from '@vuepress/plugin-seo'
 import { googleAnalyticsPlugin } from '@vuepress/plugin-google-analytics'
+import { baiduAnalyticsPlugin } from '@vuepress/plugin-baidu-analytics'
 
 import {
   head,
@@ -163,6 +164,10 @@ export default defineUserConfig({
       // https://ecosystem.vuejs.press/zh/plugins/analytics/google-analytics.html#id
       // https://analytics.google.com/analytics/web/#/p484511837/reports/intelligenthome?params=_u..nav%3Dmaui
       id: "G-WCEF8LG01X"
+    }),
+    baiduAnalyticsPlugin({
+      // 配置项
+      id: "692132b96cb3ba84e7390e3287439f93"
     }),
   ]
   // Redirection logic
