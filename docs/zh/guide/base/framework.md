@@ -27,3 +27,5 @@ IMDL-BenCo代码框架的设计概览图如下所示：
 所以，我们尤其鼓励使用者按照需求修改`Training/Testing/Visualizing Scrips`的内容，完成对于框架功能的合理取用，满足自定义的需求。并根据图中的❄️、🔥标志建议、酌情对于标注为🔥的类按需创建新的类或修改、设计相应功能完成最相应的科研任务。
 
 此外，数据集下载，模型checkpoint下载等等功能也是通过`benco data`等等CLI指令实现。
+
+<CommentService/>
