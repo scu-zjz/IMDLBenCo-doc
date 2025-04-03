@@ -151,6 +151,7 @@ export default defineUserConfig({
       repoId: "R_kgDOMJdYLw",
       category: 'Announcements',
       categoryId: "DIC_kwDOMJdYL84CovVT",
+      mapping: `title`
 
     }),
     seoPlugin({
@@ -160,6 +161,8 @@ export default defineUserConfig({
     }),
     googleAnalyticsPlugin({
       // 配置项
+      // https://ecosystem.vuejs.press/zh/plugins/analytics/google-analytics.html#id
+      // https://analytics.google.com/analytics/web/#/p484511837/reports/intelligenthome?params=_u..nav%3Dmaui
       id: "G-WCEF8LG01X"
     }),
   ]
