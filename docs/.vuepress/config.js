@@ -3,6 +3,9 @@ import { defineUserConfig } from 'vuepress/cli'
 import { viteBundler } from '@vuepress/bundler-vite'
 import { searchPlugin } from '@vuepress/plugin-search'
 import { docsearchPlugin } from '@vuepress/plugin-docsearch'
+import { commentPlugin } from '@vuepress/plugin-comment'
+import { seoPlugin } from '@vuepress/plugin-seo'
+import { googleAnalyticsPlugin } from '@vuepress/plugin-google-analytics'
 
 import {
   head,
@@ -139,6 +142,25 @@ export default defineUserConfig({
       insights: true,
       container: '#algolia-doc-search',
       debug: false,
+    }),
+    commentPlugin({
+      // 选项 https://blog.csdn.net/qq_33806001/article/details/126255433
+      // https://ecosystem.vuejs.press/zh/plugins/blog/comment/giscus/#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C
+      provider: 'Giscus',
+      repo: 'scu-zjz/IMDLBenCo-doc',
+      repoId: "R_kgDOMJdYLw",
+      category: 'Announcements',
+      categoryId: "DIC_kwDOMJdYL84CovVT",
+
+    }),
+    seoPlugin({
+      // 选项
+      // https://ecosystem.vuejs.press/zh/plugins/seo/seo/guide.html#%E5%BC%80%E7%AE%B1%E5%8D%B3%E7%94%A8
+      hostname: "https://scu-zjz.github.io/IMDLBenCo-doc/"
+    }),
+    googleAnalyticsPlugin({
+      // 配置项
+      id: "G-WCEF8LG01X"
     }),
   ]
   // Redirection logic
