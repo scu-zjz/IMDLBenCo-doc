@@ -151,8 +151,7 @@ export default defineUserConfig({
       repoId: "R_kgDOMJdYLw",
       category: 'Announcements',
       categoryId: "DIC_kwDOMJdYL84CovVT",
-      mapping: `title`
-
+      mapping: 'pathname',
     }),
     seoPlugin({
       // 选项
