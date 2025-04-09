@@ -98,7 +98,8 @@
 
 理论上在一通操作后进入此网址https://mig.nist.gov/MFC/PubData/Resources.html下载上方的数据集，也就是一般常说的NIST16（更新的20的一般需要license）：
 
-![image-20250401140137512](C:\Users\Sylence\AppData\Roaming\Typora\typora-user-images\image-20250401140137512.png)
+NC2016 Nimble Science Seta: NC2016 Test0613.SCI.tgz
+NC2016 Testset June 2013: NC2016 Test0613.tarbz2
 
 **不这么麻烦的话，知乎有大哥传网盘了，非官方的获取方式如下（不保证长久使用）：**
 
