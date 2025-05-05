@@ -17,7 +17,7 @@
   - 链接: [https://pan.baidu.com/s/1DtkOwLCTunvI3d_GAAj2Dg?pwd=bchm](https://pan.baidu.com/s/1DtkOwLCTunvI3d_GAAj2Dg?pwd=bchm) 、
   - 提取码: bchm
 - Google Drive: IMDLBenCo_ckpt
-  - Linke:[https://drive.google.com/drive/folders/1DCqc016-N4YvoMKKA87bFtrCdPVIDxAp?usp=sharing](https://drive.google.com/drive/folders/1DCqc016-N4YvoMKKA87bFtrCdPVIDxAp?usp=sharing)
+  - Link:[https://drive.google.com/drive/folders/1DCqc016-N4YvoMKKA87bFtrCdPVIDxAp?usp=sharing](https://drive.google.com/drive/folders/1DCqc016-N4YvoMKKA87bFtrCdPVIDxAp?usp=sharing)
 
 ## 需要注意的格式问题
 因为`train.py`得到的checkpoint-xx.pth需要同时保存模型权重，优化器参数，以及scaler参数，所以当使用`torch.load("checkpoint-xx.pth")`后可以看到它按照字典形式组织，包括了model，optimizer等等很多参数，会导致整个checkpoint是三倍于单纯的模型权重的大小。其形式大致如下：
