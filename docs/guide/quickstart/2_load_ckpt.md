@@ -16,6 +16,8 @@ We have made some model weights used in our reported metrics in the paper public
 - Baidu Netdisk: imdlbenco_ckpt
   - Link: [https://pan.baidu.com/s/1DtkOwLCTunvI3d_GAAj2Dg?pwd=bchm](https://pan.baidu.com/s/1DtkOwLCTunvI3d_GAAj2Dg?pwd=bchm) ,
   - Extraction Code: bchm
+- Google Drive: IMDLBenCo_ckpt
+  - Linke:[https://drive.google.com/drive/folders/1DCqc016-N4YvoMKKA87bFtrCdPVIDxAp?usp=sharing](https://drive.google.com/drive/folders/1DCqc016-N4YvoMKKA87bFtrCdPVIDxAp?usp=sharing)
 
 ## Format Issues to Note
 Since the checkpoint-xx.pth obtained from `train.py` needs to save model weights, optimizer parameters, and scaler parameters at the same time, when using `torch.load("checkpoint-xx.pth")`, you can see that it is organized in the form of a dictionary, including model, optimizer, and many other parameters, which makes the entire checkpoint three times the size of the pure model weights. The form is roughly as follows:
