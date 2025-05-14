@@ -1,6 +1,6 @@
 {
-  "source_dir": "D:\\workspace\\IMDLBenCo-doc\\docs\\zh",
+  "source_dir": "../docs",
   "files": [
-    "guide\\quickstart\\4_whole_pipeline.md"
+    "zh\\guide\\quickstart\\4_save_images.md"
   ]
 }

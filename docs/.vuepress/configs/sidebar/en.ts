@@ -28,6 +28,7 @@ export const sidebarEn: SidebarConfig = {
                 "/guide/quickstart/1_model_zoo.md",
                 "/guide/quickstart/2_load_ckpt.md",
                 "/guide/quickstart/3_demo.md",
+                "/guide/quickstart/4_save_images.md"
                 // '/guide/getting-started.md',
                 // '/guide/configuration.md',
                 // '/guide/page.md',
