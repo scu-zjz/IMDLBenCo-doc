@@ -21,7 +21,8 @@ export const navbarZh: NavbarConfig = [
                     "/zh/guide/quickstart/1_model_zoo.md",
                     "/zh/guide/quickstart/2_load_ckpt.md",
                     "/zh/guide/quickstart/3_demo.md",
-                    "/zh/guide/quickstart/4_save_images.md"
+                    "/zh/guide/quickstart/4_save_images.md",
+                    "/zh/guide/quickstart/5_complexity.md"
 
                 ],
             },

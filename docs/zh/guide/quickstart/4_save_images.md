@@ -1,4 +1,4 @@
-# 案例四：推理并保存一个数据集的mask和label并保存以供观察和后续使用
+# 案例四：推理并保存一个数据集的mask和label
 我们认为学习最快的方式就是“Learn by Doing”（边做边学），所以通过几个案例来帮助使用者快速上手。
 
 总的来说IMDL-BenCo通过类似`git`、`conda`这样的命令行调用方式帮助你快速完成图像篡改检测科研项目的开发。如果你学过vue等前端技术，那按照vue-cli来理解IMDLBenCo的设计范式会非常轻松。
@@ -18,7 +18,7 @@
 - 对于推理模型，你可以自己训练获得输出的checkpoint，也可以下载我们`model_zoo`中提供的checkpoint。
 
 ## 使用
-该功能可以在`benco init`和`benco init model_zoo`下使用，最新版本会在你的工作路径下生成[`save_images.py`](https://github.com/scu-zjz/IMDLBenCo/blob/main/IMDLBenCo/training_scripts/save_images.py)，该文件的`--checkpoint_path`读入**一个具体的checkpoint文件**（区别于test.py读入的是一个包含多个ckpt的文件夹）和一个整理好的数据集路径。
+该功能可以在`benco init`和`benco init model_zoo`下使用，最新版本会在你的工作路径下生成[`test_save_images.py`](https://github.com/scu-zjz/IMDLBenCo/blob/main/IMDLBenCo/training_scripts/test_save_images.py)，该文件的`--checkpoint_path`读入**一个具体的checkpoint文件**（区别于test.py读入的是一个包含多个ckpt的文件夹）和一个整理好的数据集路径。
 
 推理支持多卡加速，可以参考如下MVSS-Net使用的推理脚本构建shell脚本来启动推理和保存：
 ```shell

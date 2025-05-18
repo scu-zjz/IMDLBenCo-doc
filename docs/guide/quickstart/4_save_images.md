@@ -1,6 +1,6 @@
 
 
-# Case Four: Inference and Save a Dataset's Mask and Label for Observation and Subsequent Use
+# Case Four: Inference and Save a Dataset's Mask and Label
 We believe that the fastest way to learn is through "Learn by Doing" (learning by doing), so we will help users quickly get started with a few cases.
 
 Overall, IMDL-BenCo assists you in quickly completing the development of image tampering detection research projects through command line calls similar to `git` and `conda`. If you have learned front-end technologies like vue, understanding the design paradigm of IMDLBenCo in the same way as vue-cli will be very easy.
@@ -20,7 +20,7 @@ First, you need a dataset to be inferred and a model and corresponding checkpoin
 - For the inference model, you can obtain a checkpoint from your own training or download a checkpoint provided in our `model_zoo`.
 
 ## Usage
-This feature can be used under `benco init` and `benco init model_zoo`. The latest version will generate [save_images.py](https://github.com/scu-zjz/IMDLBenCo/blob/main/IMDLBenCo/training_scripts/save_images.py) in your working path. The `--checkpoint_path` of this file reads **a specific checkpoint file** (different from test.py which reads a folder containing multiple ckpts) and a well-organized dataset path.
+This feature can be used under `benco init` and `benco init model_zoo`. The latest version will generate [test_save_images.py](https://github.com/scu-zjz/IMDLBenCo/blob/main/IMDLBenCo/training_scripts/test_save_images.py) in your working path. The `--checkpoint_path` of this file reads **a specific checkpoint file** (different from test.py which reads a folder containing multiple ckpts) and a well-organized dataset path.
 
 Inference supports multi-card acceleration. You can refer to the following MVSS-Net inference script to build a shell script to start inference and save:
 ```shell

@@ -1,6 +1,6 @@
 {
-  "source_dir": "../docs",
+  "source_dir": "../docs/zh/",
   "files": [
-    "zh\\guide\\quickstart\\4_save_images.md"
+    "guide\\quickstart\\5_complexity.md"
   ]
 }
