@@ -59,3 +59,5 @@ torchrun  \
 }
 ```
 如果是不带`image-level`输出，只做segmentation的模型，则默认不会输出json，只输出图片。
+
+<CommentService/>

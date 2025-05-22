@@ -61,3 +61,5 @@ In addition, if the model itself has an `image-level` output, the framework will
 }
 ```
 If it is a model without `image-level` output and only performs segmentation, it will not output json by default, only images.
+
+<CommentService/>
