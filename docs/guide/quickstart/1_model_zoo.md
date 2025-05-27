@@ -134,7 +134,7 @@ In the BenCo framework, we can correctly initialize the corresponding model by p
 
 
 ## Pre-trained Weights Download
-In addition, different models will also have their own custom parameters or required pre-trained weights. This part will be supplemented in subsequent documents. TODO
+In addition, different models will also have their own custom parameters or required pre-trained weights. 
 
 Currently, you can directly refer to the README in each model folder under [this path](https://github.com/scu-zjz/IMDLBenCo/tree/main/IMDLBenCo/model_zoo) to download the required pre-trained weights.
 

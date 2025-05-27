@@ -132,9 +132,8 @@ class Trufor(nn.Module):
 :::
 
 
-
 ## 预训练权重下载
-此外，不同的模型还会有自己的自定义参数，或者需要的预训练权重，这部分会在后续文档中补齐。TODO
+此外，不同的模型还会有自己的自定义参数，或者需要的预训练权重。
 
 目前可以直接参考[此路径](https://github.com/scu-zjz/IMDLBenCo/tree/main/IMDLBenCo/model_zoo)下的各个模型的文件夹内的README，下载所需的预训练权重。
 
