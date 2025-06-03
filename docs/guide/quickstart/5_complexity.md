@@ -1,4 +1,4 @@
-# Obtaining Model Parameters and FLOPs
+# Case Five: Obtaining Model Parameters and FLOPs
 We believe that the fastest way to learn is by "Learn by Doing" (learning by doing), so we will use a few examples to help users get started quickly.
 
 In general, IMDL-BenCo helps you quickly complete the development of image tampering detection scientific research projects through command line calls similar to `git` and `conda`. If you have learned front-end technologies such as vue, understanding the design paradigm of IMDLBenCo according to vue-cli will be very easy.
